@@ -90,13 +90,8 @@ class CodeGenerate {
    * @param url
    * @returns
    */
-  private getAbstractFunc(method: string, module: string, url: string) {
-    const { pathname } = parse(url);
-    const pathnameArr = pathname.split("/");
-    return (
-      firstToUpper(method) +
-      fristToUpperCase(`${module}-${pathnameArr[pathnameArr.length - 1]}`)
-    );
+  private getAbstractFunc(method: string, module: string, last: string) {
+    return firstToUpper(method) + fristToUpperCase(`${module}-${last}`);
   }
 
   /**
@@ -107,11 +102,14 @@ class CodeGenerate {
    * @returns
    */
   private getNames(method: string, module: string, url: string) {
+    const { pathname } = parse(url);
+    const pathnameArr = pathname.split("/");
+    const last = pathnameArr[pathnameArr.length - 1];
     return {
       entity: fristToUpperCase(`${method}-${module}-entity`),
-      params: fristToUpperCase(`${method}-${module}-params`),
+      params: fristToUpperCase(`${method}-${module}-${last}-params`),
       model: fristToUpperCase(`${method}-${module}-model`),
-      abstractFunc: this.getAbstractFunc(method, module, url),
+      abstractFunc: this.getAbstractFunc(method, module, last),
     };
   }
 
@@ -207,6 +205,7 @@ class CodeGenerate {
         this.addFunction(functionList, {
           abstractFunc: abstractFunc,
           params,
+          method,
           return: entity,
           requestUrl: this.getPathName(repository.url),
         });
@@ -234,6 +233,15 @@ new CodeGenerate({
           body: {
             user_name: "admin",
             password: "123456",
+          },
+        },
+        {
+          url: "http://127.0.0.1:8889/admin/registerAdmin",
+          method: "POST",
+          body: {
+            user_name: "admin1",
+            password: "123456",
+            nick_name: "123456",
           },
         },
       ],

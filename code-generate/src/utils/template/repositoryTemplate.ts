@@ -20,7 +20,7 @@ export const repositoryTemplate = ({
       async ${item.abstractFunc}(${
           item.params !== "" ? "params: " + item.params : ""
         }): Promise<IResponse<${item.return}>> {
-        return await this.webHttpService.get('${item.requestUrl}' ${
+        return await this.webHttpService.${item.method}('${item.requestUrl}' ${
           item.params !== "" ? ",params" : ""
         })
       }
