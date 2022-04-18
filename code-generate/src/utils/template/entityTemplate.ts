@@ -11,7 +11,7 @@ export const entityTemplate = ({
     export abstract class ${entity}Repository {
       ${functionList
         .map((item) => {
-          return `abstract ${item.abstractFunction}(${
+          return `abstract ${item.abstractFunc}(${
             item.params !== "" ? "params: " + item.params : ""
           }): Promise<IResponse<${item.return}>>`;
         })

@@ -17,7 +17,7 @@ export const repositoryTemplate = ({
     ${functionList
       .map((item) => {
         return `
-      async ${item.abstractFunction}(${
+      async ${item.abstractFunc}(${
           item.params !== "" ? "params: " + item.params : ""
         }): Promise<IResponse<${item.return}>> {
         return await this.webHttpService.get('${item.requestUrl}' ${

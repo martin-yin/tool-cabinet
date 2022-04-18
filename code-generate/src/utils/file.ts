@@ -25,17 +25,16 @@ export async function generateFile(
   directory: string,
   file: string,
   data: string
-) {
+): Promise<boolean> {
   console.log("正在创建创建文件:", directory);
   if (!fs.existsSync(directory)) {
-    console.log("目录不存在，正在创建目录:", directory);
     await dotExistDirectoryCreate(directory);
-  } else {
-    if (fs.existsSync(`${directory}${file}`)) {
-      console.log(`创建文件失败，${file}文件已经存在`);
-      return;
-    }
   }
+  if (fs.existsSync(`${directory}/${file}`)) {
+    console.log(`创建文件失败，${file}文件已经存在`);
+    return false;
+  }
+
   return new Promise((resolve, reject) => {
     fs.writeFile(`${directory}/${file}`, data, "utf8", (err) => {
       if (err) {

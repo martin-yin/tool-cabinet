@@ -17,7 +17,7 @@ export interface CodeGenerateOptionsType {
 }
 
 export interface RepositoryTemplateFunctionType {
-  abstractFunction: string;
+  abstractFunc: string;
   return: string;
   requestUrl: string;
   params?: string;
