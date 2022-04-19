@@ -12,13 +12,29 @@ export abstract class ISourceCode {
     repository: RepositoryType,
     paramsName: string
   ): void;
+
+  abstract mapFormSourceCode(domain: DomainType): Promise<SourceCodeType>;
+
+  abstract clearSourceCode(): void;
 }
 
 export class SourceCode implements ISourceCode {
   json2ts: Json2Ts;
-
+  sourceCode: SourceCodeType = {
+    entityTypeList: [],
+    modelTypeList: [],
+    functionList: [],
+  };
   constructor() {
     this.json2ts = new Json2Ts();
+  }
+
+  clearSourceCode() {
+    this.sourceCode = {
+      entityTypeList: [],
+      modelTypeList: [],
+      functionList: [],
+    };
   }
 
   assembleModelSource(repository: RepositoryType, paramsName: string) {
@@ -39,12 +55,7 @@ export class SourceCode implements ISourceCode {
     return paramsType;
   }
 
-  async mapFormSourceCode(domain: DomainType) {
-    const sourceCode: SourceCodeType = {
-      entityTypeList: [],
-      modelTypeList: [],
-      functionList: [],
-    };
+  async mapFormSourceCode(domain: DomainType): Promise<SourceCodeType> {
     const { module, repositorys } = domain;
     for (const repository of repositorys) {
       const { method } = repository;
@@ -57,13 +68,13 @@ export class SourceCode implements ISourceCode {
       const result = await repositoryRequest(repository);
       if (result) {
         // 请求完成后生成 ts 类型。
-        sourceCode.entityTypeList.push(
+        this.sourceCode.entityTypeList.push(
           this.json2ts.convert(JSON.stringify(result), entity)
         );
-        sourceCode.modelTypeList.push(
+        this.sourceCode.modelTypeList.push(
           this.assembleModelSource(repository, params)
         );
-        sourceCode.functionList.push({
+        this.sourceCode.functionList.push({
           abstractFunc: abstractFunc,
           params,
           method,
@@ -74,6 +85,6 @@ export class SourceCode implements ISourceCode {
         throw Error(`${repository.url} 请求失败`);
       }
     }
-    return sourceCode;
+    return this.sourceCode;
   }
 }

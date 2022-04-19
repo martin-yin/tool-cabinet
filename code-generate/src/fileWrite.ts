@@ -25,7 +25,7 @@ export class FileWrite implements IFileWrite {
   private modelFile: string;
   private repositoryFile: string;
 
-  constructor(options: FileWriteOptions) {
+  init(options: FileWriteOptions) {
     this.options = options;
     this.modelFile = `${options.modulePath}/model`;
     this.repositoryFile = `${options.modulePath}/repository`;
