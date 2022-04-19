@@ -13,6 +13,7 @@ export interface DomainType {
 }
 
 export interface CodeGenerateOptionsType {
+  filePath: string;
   domains: DomainType[];
 }
 
@@ -33,4 +34,10 @@ export interface EntityTemplateType {
   entity: string;
   functionList: RepositoryTemplateFunctionType[];
   entityTypeList: string[];
+}
+
+export interface SourceCodeType {
+  entityTypeList: string[];
+  modelTypeList: string[];
+  functionList: RepositoryTemplateFunctionType[];
 }
