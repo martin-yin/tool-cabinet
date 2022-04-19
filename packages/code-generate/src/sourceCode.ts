@@ -8,11 +8,6 @@ export abstract class ISourceCode {
     paramsName: string
   ): string;
 
-  abstract assembleModelSource(
-    repository: RepositoryType,
-    paramsName: string
-  ): void;
-
   abstract mapFormSourceCode(domain: DomainType): Promise<SourceCodeType>;
 
   abstract clearSourceCode(): void;

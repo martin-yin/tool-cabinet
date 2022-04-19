@@ -1,15 +1,17 @@
-# web-dev-tools
+# Web Dev Tools
 
 开发前端时沉淀的一些工具
 
 ## code-generate
 
-用于生成 "自研"的整洁架构代码。
+此工具只适用于采用了"整洁架构"模式的项目。
 
-通过配置接口的方式，运行后可自动生成 `model` `repositoryT` `entity` 代码，让开发者专注于业务开发。
+通过配置文件, `code-eenerate` 会自动请求接口，当接口请求成功时,通过调用`json2ts`将接口返回的数据转换成 `typescript` 类型。
+
+转换成功后, 调用默认模板生成对应的文件。
 
 ## tsyringe-auto-inject
 
-需要配合 `tsyringe`使用，正如其名。
+正如其名, 需要配合 `tsyringe`使用
 
-`tsyringe` 管理注入非常麻烦，有时候可能会写，通过 `tsyringe-auto-inject` 可实现自动注入。
+`tsyringe` 管理注入非常麻烦，甚至会出现写错的情况。通过 `tsyringe-auto-inject` 在分析 AST 树之后解析出各模块之间的对应关系，最总写入顶部文件中，实现"自动注入"。
