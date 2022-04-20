@@ -17,6 +17,7 @@ abstract class IFileWrite {
   abstract writeEntityFile(): Promise<boolean>
   abstract writeModelFile(): Promise<boolean>
   abstract writeRepositoryFile(): Promise<boolean>
+  abstract writeUseCaseFiles(): Promise<void | any>
 }
 
 export class FileWrite implements IFileWrite {
@@ -33,16 +34,16 @@ export class FileWrite implements IFileWrite {
   }
 
   async writeFiles() {
-    const entityFileWrite = await this.writeEntityFile()
-    if (entityFileWrite) {
-      const modelFileWrite = await this.writeModelFile()
-      if (modelFileWrite) {
-        const repositoryFileWrite = await this.writeRepositoryFile()
-        if (repositoryFileWrite) {
-          return await this.writeUseCaseFile()
-        }
+    const result = await Promise.all([this.writeEntityFile(), this.writeModelFile(), this.writeRepositoryFile()]).catch(
+      error => {
+        console.log('失败原因：', error)
       }
+    )
+    if (result) {
+      return await this.writeUseCaseFiles()
     }
+
+    return false
   }
 
   async writeEntityFile(): Promise<boolean> {
@@ -50,7 +51,7 @@ export class FileWrite implements IFileWrite {
       module,
       sourceCode: { entitySource }
     } = this.options
-    return await generateFile(this.modelDir, `${module}Entity.ts`, entityTemplate(entitySource))
+    return generateFile(this.modelDir, `${module}Entity.ts`, entityTemplate(entitySource))
   }
 
   async writeModelFile(): Promise<boolean> {
@@ -58,7 +59,7 @@ export class FileWrite implements IFileWrite {
       module,
       sourceCode: { modelSource }
     } = this.options
-    return await generateFile(this.modelDir, `${module}Model.ts`, modelTemplate(modelSource))
+    return generateFile(this.modelDir, `${module}Model.ts`, modelTemplate(modelSource))
   }
 
   async writeRepositoryFile(): Promise<boolean> {
@@ -66,26 +67,28 @@ export class FileWrite implements IFileWrite {
       module,
       sourceCode: { repositorySource }
     } = this.options
-    return await generateFile(this.repositoryDir, `${module}Repository.ts`, repositoryTemplate(repositorySource))
+    return generateFile(this.repositoryDir, `${module}Repository.ts`, repositoryTemplate(repositorySource))
   }
 
-  async writeUseCaseFile() {
+  async writeUseCaseFiles(): Promise<void | any> {
     const {
       useCaseSource: { useCaseList }
     } = this.options.sourceCode
+
+    const useCaseWriteAll = []
     for (const usecase of useCaseList) {
-      const reulst = await generateFile(
-        this.applicationDir,
-        `${firstToLower(usecase.classeName)}.ts`,
-        useCaseTemplate({
-          ...usecase
-        })
+      useCaseWriteAll.push(
+        generateFile(
+          this.applicationDir,
+          `${firstToLower(usecase.classeName)}.ts`,
+          useCaseTemplate({
+            ...usecase
+          })
+        )
       )
-      if (!reulst) {
-        console.log(`文件${usecase.classeName}.ts 写入失败`)
-        break
-      }
     }
-    return true
+    return Promise.all(useCaseWriteAll).catch(error => {
+      console.log('失败原因：', error)
+    })
   }
 }

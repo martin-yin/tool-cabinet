@@ -77,7 +77,7 @@ export class SourceCode implements ISourceCode {
     const {
       useCaseSource: { useCaseList }
     } = this.sourceCodes
-    console.log(funcName, entityType, 'funcName\n')
+
     useCaseList.push({
       classeName: funcName + 'Usecase',
       paramsType: paramsType,

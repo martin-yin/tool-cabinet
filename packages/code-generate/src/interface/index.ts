@@ -17,34 +17,6 @@ export interface CodeGenerateOptionsType {
   domains: DomainType[]
 }
 
-// export interface RepositoryTemplateFuncType {
-//   funcName: string
-//   method: string
-//   returnName: string
-//   requestUrl: string
-//   paramsName?: string
-// }
-
-// export interface RepositoryTemplateType {
-//   module: string
-//   functionList: RepositoryTemplateFuncType[]
-// }
-
-// export interface EntityTemplateType {
-//   entity: string
-//   funcList: RepositoryTemplateFuncType[]
-//   entityTypeList: string[]
-// }
-
-// export interface UseCaseTemplateType {
-//   classeName: string
-//   paramsName: string
-//   returnName: string
-//   repositoryName: string
-//   repositoryType: string
-//   funcName: string
-// }
-
 export type AbstractFunc = Record<'funcName' | 'paramsType' | 'returnType', string>
 
 export interface AbstractClassListType {

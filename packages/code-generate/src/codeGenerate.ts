@@ -29,14 +29,9 @@ export class CodeGenerate {
         module,
         sourceCode: code
       })
-      const result = await this.fileWrite
-        .writeFiles()
-        .catch(err => {
-          console.log(err)
-        })
-        .finally(() => {
-          this.sourceCode.initSourceCode()
-        })
+      const result = await this.fileWrite.writeFiles().finally(() => {
+        this.sourceCode.initSourceCode()
+      })
       if (result) {
         console.log(`模块${module}写入完成!`)
       }

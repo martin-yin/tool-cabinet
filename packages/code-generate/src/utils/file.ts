@@ -22,7 +22,6 @@ export function mkdirs(directory: string, callback: () => void) {
 }
 
 export async function generateFile(directory: string, file: string, data: string): Promise<boolean> {
-  console.log('正在创建创建文件:', directory)
   if (!fs.existsSync(directory)) {
     await dotExistDirectoryCreate(directory)
   }
@@ -33,6 +32,7 @@ export async function generateFile(directory: string, file: string, data: string
 
   return new Promise((resolve, reject) => {
     fs.writeFile(`${directory}/${file}`, data, 'utf8', err => {
+      console.log('正在创建创建文件:', directory)
       if (err) {
         console.log(`创建创建文件失败: ${file}`, err)
         reject(err)
