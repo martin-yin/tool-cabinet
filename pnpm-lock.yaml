@@ -6,6 +6,7 @@ importers:
     specifiers:
       '@commitlint/cli': ^16.2.3
       '@commitlint/config-conventional': ^16.2.1
+      chalk: ^5.0.1
       esno: ^0.14.1
       husky: ^7.0.4
       lerna: ^4.0.0
@@ -14,6 +15,7 @@ importers:
       typescript: ^4.6.3
       vitepress: ^0.22.3
     dependencies:
+      chalk: 5.0.1
       esno: 0.14.1
       lerna: 4.0.0
       typescript: 4.6.3
@@ -1749,6 +1751,11 @@ packages:
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
+
+  /chalk/5.0.1:
+    resolution: {integrity: sha512-Fo07WOYGqMfCWHOzSXOt2CxDbC6skS/jO9ynEcmpANMoPrD+W1r1K6Vx7iNm+AQmETU1Xr2t+n8nzkV9t6xh3w==}
+    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
+    dev: false
 
   /chardet/0.7.0:
     resolution: {integrity: sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==}

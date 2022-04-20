@@ -5,6 +5,7 @@ import { repositoryTemplate } from './template/repositoryTemplate'
 import { useCaseTemplate } from './template/useCaseTemplate'
 import { firstToLower } from './utils'
 import { generateFile } from './utils/file'
+import chalk from 'chalk'
 
 export interface FileWriteOptions {
   modulePath: string
@@ -34,15 +35,15 @@ export class FileWrite implements IFileWrite {
   }
 
   async writeFiles() {
+    console.log(chalk.blue(`\n开始创建文件...\n`))
     const result = await Promise.all([this.writeEntityFile(), this.writeModelFile(), this.writeRepositoryFile()]).catch(
       error => {
-        console.log('失败原因：', error)
+        console.log(chalk.red(`失败原因：${error} \n`))
       }
     )
-    if (result) {
+    if (result[0]) {
       return await this.writeUseCaseFiles()
     }
-
     return false
   }
 
@@ -88,7 +89,7 @@ export class FileWrite implements IFileWrite {
       )
     }
     return Promise.all(useCaseWriteAll).catch(error => {
-      console.log('失败原因：', error)
+      console.log(chalk.red(`失败原因：${error} \n`))
     })
   }
 }

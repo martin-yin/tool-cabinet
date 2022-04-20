@@ -1,7 +1,7 @@
 import { CodeGenerateOptionsType } from './interface'
 import { FileWrite } from './fileWrite'
 import { ISourceCode, SourceCode } from './sourceCode'
-
+import chalk from 'chalk'
 export class CodeGenerate {
   public options: CodeGenerateOptionsType
   private basePath: string
@@ -32,8 +32,11 @@ export class CodeGenerate {
       const result = await this.fileWrite.writeFiles().finally(() => {
         this.sourceCode.initSourceCode()
       })
+
       if (result) {
-        console.log(`模块${module}写入完成!`)
+        console.log(chalk.green(`模块${module}写入完成!\n`))
+      } else {
+        console.log(chalk.red(`模块${module}写入失败!\n`))
       }
     }
   }
