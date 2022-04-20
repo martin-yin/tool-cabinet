@@ -3,13 +3,13 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'Web Dev Tools',
   lastUpdated: true,
-  base: 'https://martin-yin.github.io/web-dev-tools/',
+  base: '/web-dev-tools/',
   themeConfig: {
     repo: 'martin-yin/web-dev-tools',
     docsDir: 'docs',
     docsBranch: 'main',
     lastUpdated: ' 最后一次更新',
-    nav: [{ text: '介绍', link: '' }],
+    nav: [{ text: '介绍', link: '/' }],
     sidebar: {
       '/': getGuideSidebar()
     }
