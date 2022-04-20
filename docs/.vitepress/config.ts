@@ -9,7 +9,7 @@ export default defineConfig({
     docsDir: 'docs',
     docsBranch: 'main',
     lastUpdated: ' 最后一次更新',
-    nav: [{ text: '介绍', link: '/' }],
+    nav: [{ text: '介绍', link: '' }],
     sidebar: {
       '/': getGuideSidebar()
     }
