@@ -1,85 +1,134 @@
-import { DomainType, RepositoryType, SourceCodeType } from "./interface";
-import { getNames, getPathName, repositoryRequest } from "./utils";
-import { Json2Ts } from "./utils/json2ts";
+import { DomainType, RepositoryType, SourceCodesType, UseCaseSourceType } from './interface'
+import { firstToUpper, getNames, getPathName, repositoryRequest } from './utils'
+import { Json2Ts } from './utils/json2ts'
 
 export abstract class ISourceCode {
-  abstract assembleModelSource(
-    repository: RepositoryType,
-    paramsName: string
-  ): string;
-
-  abstract mapFormSourceCode(domain: DomainType): Promise<SourceCodeType>;
-
-  abstract clearSourceCode(): void;
+  abstract assembleEntitySource(result: any, entityType: string, funcName: string, paramsType: string): void
+  abstract assembleModelSource(repository: RepositoryType, paramsType: string): void
+  abstract assembleRepositorySource(
+    method: string,
+    paramsType: string,
+    funcName: string,
+    entityType: string,
+    repository: RepositoryType
+  ): void
+  abstract assembleUseCaseSource(paramsType: string, entityType: string, funcName: string): void
+  abstract mapFormSourceCode(domain: DomainType): Promise<SourceCodesType>
+  abstract initSourceCode(): void
 }
 
 export class SourceCode implements ISourceCode {
-  json2ts: Json2Ts;
-  sourceCode: SourceCodeType = {
-    entityTypeList: [],
-    modelTypeList: [],
-    functionList: [],
-  };
+  json2ts: Json2Ts
+  module: string
+  sourceCodes: SourceCodesType
+
   constructor() {
-    this.json2ts = new Json2Ts();
+    this.json2ts = new Json2Ts()
+    this.initSourceCode()
   }
 
-  clearSourceCode() {
-    this.sourceCode = {
-      entityTypeList: [],
-      modelTypeList: [],
-      functionList: [],
-    };
+  assembleEntitySource(result: any, entityType: string, funcName: string, paramsType: string) {
+    const { entitySource } = this.sourceCodes
+    const { abstractClassList } = entitySource
+    entitySource.entityTypeContent.push(this.json2ts.convert(JSON.stringify(result), entityType))
+    abstractClassList.abstractClassName = `${firstToUpper(this.module)}Repository`
+    abstractClassList.abstractFuncList.push({
+      funcName: funcName,
+      paramsType: paramsType,
+      returnType: entityType
+    })
   }
 
-  assembleModelSource(repository: RepositoryType, paramsName: string) {
-    let paramsType = "";
+  assembleModelSource(repository: RepositoryType, paramsType: string) {
+    const { modelTypeContent } = this.sourceCodes.modelSource
+    let paramsTypeContent = ''
+    // 判断 是否存在params 参数
     if (repository?.params) {
-      paramsType = this.json2ts.convert(
-        JSON.stringify(repository.params),
-        paramsName
-      );
+      paramsTypeContent = this.json2ts.convert(JSON.stringify(repository.params), paramsType)
     }
+    // 判断 是否存在body 参数
     if (repository?.body) {
-      const bodyName = paramsName;
-      paramsType = this.json2ts.convert(
-        JSON.stringify(repository.body),
-        bodyName
-      );
+      paramsTypeContent = this.json2ts.convert(JSON.stringify(repository.body), paramsType)
     }
-    return paramsType;
+    modelTypeContent.push(paramsTypeContent)
   }
 
-  async mapFormSourceCode(domain: DomainType): Promise<SourceCodeType> {
-    const { module, repositorys } = domain;
-    for (const repository of repositorys) {
-      const { method } = repository;
-      const { entity, params, abstractFunc } = getNames(
-        method,
-        module,
-        repository.url
-      );
-      // 发送请求
-      const result = await repositoryRequest(repository);
-      if (result) {
-        // 请求完成后生成 ts 类型。
-        this.sourceCode.entityTypeList.push(
-          this.json2ts.convert(JSON.stringify(result), entity)
-        );
-        this.sourceCode.modelTypeList.push(
-          this.assembleModelSource(repository, params)
-        );
-        this.sourceCode.functionList.push({
-          abstractFunc: abstractFunc,
-          params,
-          method,
-          return: entity,
-          requestUrl: getPathName(repository.url),
-        });
-      } else {
-        throw Error(`${repository.url} 请求失败`);
+  assembleRepositorySource(
+    method: string,
+    paramsType: string,
+    funcName: string,
+    entityType: string,
+    repository: RepositoryType
+  ) {
+    const { repositorySource } = this.sourceCodes
+    const { funcList } = repositorySource
+    repositorySource.className = `${firstToUpper(this.module)}WebRepository`
+    repositorySource.abstractClassName = `${firstToUpper(this.module)}Repository`
+    funcList.push({
+      method: method,
+      paramsType,
+      funcName: funcName,
+      returnType: entityType,
+      requestUrl: getPathName(repository.url)
+    })
+  }
+
+  assembleUseCaseSource(paramsType: string, entityType: string, funcName: string) {
+    const {
+      useCaseSource: { useCaseList }
+    } = this.sourceCodes
+    console.log(funcName, entityType, 'funcName\n')
+    useCaseList.push({
+      classeName: funcName + 'Usecase',
+      paramsType: paramsType,
+      returnType: entityType,
+      abstractClass: module + 'Repository',
+      abstractClassType: firstToUpper(this.module) + 'Repository',
+      funcName: funcName
+    })
+  }
+
+  initSourceCode() {
+    this.sourceCodes = {
+      entitySource: {
+        entityTypeContent: [],
+        abstractClassList: {
+          abstractClassName: '',
+          abstractFuncList: []
+        }
+      },
+      modelSource: {
+        modelTypeContent: []
+      },
+      repositorySource: {
+        className: '',
+        abstractClassName: '',
+        funcList: []
+      },
+      useCaseSource: {
+        useCaseList: []
       }
     }
-    return this.sourceCode;
+  }
+
+  async mapFormSourceCode(domain: DomainType): Promise<SourceCodesType> {
+    const { module, repositorys } = domain
+    this.module = module
+    for (const repository of repositorys) {
+      const { method } = repository
+      const { entityType, paramsType, funcName } = getNames(method, module, repository.url)
+      // 发送请求
+      const result = await repositoryRequest(repository)
+
+      if (result) {
+        this.assembleEntitySource(result, entityType, funcName, paramsType)
+        this.assembleModelSource(repository, paramsType)
+        this.assembleRepositorySource(method, paramsType, funcName, entityType, repository)
+        this.assembleUseCaseSource(paramsType, entityType, funcName)
+      } else {
+        throw Error(`${repository.url} 请求失败`)
+      }
+    }
+    return this.sourceCodes
   }
 }

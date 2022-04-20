@@ -1,158 +1,134 @@
-import * as _ from "underscore";
+import * as _ from 'underscore'
 
 export class Json2Ts {
   convert(content: string, name: string): string {
-    let jsonContent = JSON.parse(content);
+    let jsonContent = JSON.parse(content)
 
     if (_.isArray(jsonContent)) {
-      return this.convertObjectToTsInterfaces(jsonContent[0], name);
+      return this.convertObjectToTsInterfaces(jsonContent[0], name)
     }
 
-    return this.convertObjectToTsInterfaces(jsonContent, name);
+    return this.convertObjectToTsInterfaces(jsonContent, name)
   }
 
-  private convertObjectToTsInterfaces(
-    jsonContent: any,
-    objectName: string = "RootObject"
-  ): string {
-    let optionalKeys: string[] = [];
-    let objectResult: string[] = [];
+  private convertObjectToTsInterfaces(jsonContent: any, objectName: string = 'RootObject'): string {
+    let optionalKeys: string[] = []
+    let objectResult: string[] = []
 
     for (let key in jsonContent) {
-      let value = jsonContent[key];
+      let value = jsonContent[key]
 
       if (_.isObject(value) && !_.isArray(value)) {
-        let childObjectName = this.toUpperFirstLetter(key);
-        objectResult.push(
-          this.convertObjectToTsInterfaces(value, childObjectName)
-        );
+        let childObjectName = this.toUpperFirstLetter(key)
+        objectResult.push(this.convertObjectToTsInterfaces(value, childObjectName))
         // jsonContent[key] = this.removeMajority(childObjectName) + ";";
-        jsonContent[key] = childObjectName + ";";
+        jsonContent[key] = childObjectName + ';'
       } else if (_.isArray(value)) {
-        let arrayTypes: any = this.detectMultiArrayTypes(value);
+        let arrayTypes: any = this.detectMultiArrayTypes(value)
 
         if (this.isMultiArray(arrayTypes)) {
-          let multiArrayBrackets = this.getMultiArrayBrackets(value);
+          let multiArrayBrackets = this.getMultiArrayBrackets(value)
 
           if (this.isAllEqual(arrayTypes)) {
-            jsonContent[key] = arrayTypes[0].replace("[]", multiArrayBrackets);
+            jsonContent[key] = arrayTypes[0].replace('[]', multiArrayBrackets)
           } else {
-            jsonContent[key] = "any" + multiArrayBrackets + ";";
+            jsonContent[key] = 'any' + multiArrayBrackets + ';'
           }
         } else if (value.length > 0 && _.isObject(value[0])) {
-          let childObjectName = this.toUpperFirstLetter(key);
-          objectResult.push(
-            this.convertObjectToTsInterfaces(value[0], childObjectName)
-          );
+          let childObjectName = this.toUpperFirstLetter(key)
+          objectResult.push(this.convertObjectToTsInterfaces(value[0], childObjectName))
           // jsonContent[key] = this.removeMajority(childObjectName) + "[];";
 
-          jsonContent[key] = childObjectName + "[];";
+          jsonContent[key] = childObjectName + '[];'
         } else {
-          jsonContent[key] = arrayTypes[0];
+          jsonContent[key] = arrayTypes[0]
         }
       } else if (_.isDate(value)) {
-        jsonContent[key] = "Date;";
+        jsonContent[key] = 'Date;'
       } else if (_.isString(value)) {
-        jsonContent[key] = "string;";
+        jsonContent[key] = 'string;'
       } else if (_.isBoolean(value)) {
-        jsonContent[key] = "boolean;";
+        jsonContent[key] = 'boolean;'
       } else if (_.isNumber(value)) {
-        jsonContent[key] = "number;";
+        jsonContent[key] = 'number;'
       } else {
-        jsonContent[key] = "any;";
-        optionalKeys.push(key);
+        jsonContent[key] = 'any;'
+        optionalKeys.push(key)
       }
     }
 
-    let result = this.formatCharsToTypeScript(
-      jsonContent,
-      objectName,
-      optionalKeys
-    );
-    objectResult.push(result);
+    let result = this.formatCharsToTypeScript(jsonContent, objectName, optionalKeys)
+    objectResult.push(result)
 
-    return objectResult.join("\n\n");
+    return objectResult.join('\n\n')
   }
 
-  private detectMultiArrayTypes(
-    value: any,
-    valueType: string[] = []
-  ): string[] {
+  private detectMultiArrayTypes(value: any, valueType: string[] = []): string[] {
     if (_.isArray(value)) {
       if (value.length === 0) {
-        valueType.push("any[];");
+        valueType.push('any[];')
       } else if (_.isArray(value[0])) {
         for (let index = 0, length = value.length; index < length; index++) {
-          let element = value[index];
+          let element = value[index]
 
-          let valueTypeResult = this.detectMultiArrayTypes(element, valueType);
-          valueType.concat(valueTypeResult);
+          let valueTypeResult = this.detectMultiArrayTypes(element, valueType)
+          valueType.concat(valueTypeResult)
         }
       } else if (_.all(value, _.isString)) {
-        valueType.push("string[];");
+        valueType.push('string[];')
       } else if (_.all(value, _.isNumber)) {
-        valueType.push("number[];");
+        valueType.push('number[];')
       } else if (_.all(value, _.isBoolean)) {
-        valueType.push("boolean[];");
+        valueType.push('boolean[];')
       } else {
-        valueType.push("any[];");
+        valueType.push('any[];')
       }
     }
 
-    return valueType;
+    return valueType
   }
 
   private isMultiArray(arrayTypes: string[]) {
-    return arrayTypes.length > 1;
+    return arrayTypes.length > 1
   }
 
   private isAllEqual(array: string[]) {
-    return _.all(array.slice(1), _.partial(_.isEqual, array[0]));
+    return _.all(array.slice(1), _.partial(_.isEqual, array[0]))
   }
 
   private getMultiArrayBrackets(content: string | any): string {
-    let jsonString = JSON.stringify(content);
-    let brackets = "";
+    let jsonString = JSON.stringify(content)
+    let brackets = ''
 
     for (let index = 0, length = jsonString.length; index < length; index++) {
-      let element = jsonString[index];
+      let element = jsonString[index]
 
-      if (element === "[") {
-        brackets = brackets + "[]";
+      if (element === '[') {
+        brackets = brackets + '[]'
       } else {
-        index = length;
+        index = length
       }
     }
 
-    return brackets;
+    return brackets
   }
 
-  private formatCharsToTypeScript(
-    jsonContent: any,
-    objectName: string,
-    optionalKeys: string[]
-  ): string {
-    let result = JSON.stringify(jsonContent, null, "\t")
-      .replace(new RegExp('"', "g"), "")
-      .replace(new RegExp(",", "g"), "");
+  private formatCharsToTypeScript(jsonContent: any, objectName: string, optionalKeys: string[]): string {
+    let result = JSON.stringify(jsonContent, null, '\t')
+      .replace(new RegExp('"', 'g'), '')
+      .replace(new RegExp(',', 'g'), '')
 
-    let allKeys = _.allKeys(jsonContent);
+    let allKeys = _.allKeys(jsonContent)
     for (let index = 0, length = allKeys.length; index < length; index++) {
-      let key = allKeys[index];
+      let key = allKeys[index]
       if (_.contains(optionalKeys, key)) {
-        result = result.replace(
-          new RegExp(key + ":", "g"),
-          this.toLowerFirstLetter(key) + "?:"
-        );
+        result = result.replace(new RegExp(key + ':', 'g'), this.toLowerFirstLetter(key) + '?:')
       } else {
-        result = result.replace(
-          new RegExp(key + ":", "g"),
-          this.toLowerFirstLetter(key) + ":"
-        );
+        result = result.replace(new RegExp(key + ':', 'g'), this.toLowerFirstLetter(key) + ':')
       }
     }
 
-    return "export interface " + objectName + " " + result;
+    return 'export interface ' + objectName + ' ' + result
   }
 
   // private removeMajority(objectName: string): string {
@@ -166,19 +142,19 @@ export class Json2Ts {
   // }
 
   private toUpperFirstLetter(text: string) {
-    return text.charAt(0).toUpperCase() + text.slice(1);
+    return text.charAt(0).toUpperCase() + text.slice(1)
   }
 
   private toLowerFirstLetter(text: string) {
-    return text.charAt(0).toLowerCase() + text.slice(1);
+    return text.charAt(0).toLowerCase() + text.slice(1)
   }
 
   isJson(stringContent): boolean {
     try {
-      JSON.parse(stringContent);
+      JSON.parse(stringContent)
     } catch (e) {
-      return false;
+      return false
     }
-    return true;
+    return true
   }
 }
