@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - name: Use Pnpm
+        uses: pnpm/action-setup@v2.2.1
+        with:
+          version: 6.32.3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build
+        run: pnpm docs:build
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4.3.0
+        with:
+          ACCESS_TOKEN: ${{ secrets.DEPLOY_KEY }}
+          BRANCH: gh-pages
+          FOLDER: docs/.vitepress/dist
+          REPOSITORY_NAME: martin-yin.github.io/web-dev-tools
