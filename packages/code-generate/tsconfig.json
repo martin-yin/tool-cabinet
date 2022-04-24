@@ -12,6 +12,6 @@
     "emitDecoratorMetadata": true,
     "moduleResolution": "node",
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "__test__/**/*.ts"],
   "exclude": ["./dist"]
 }

@@ -29,13 +29,27 @@ export abstract class ITransformCode {
 }
 
 export class TransformCode implements ITransformCode {
-  _entityCode: EntityCodeType
+  _entityCode: EntityCodeType = null
   _modelCode: ModelCodeType
   _repositoryCode: RepositoryCodeType
   _useCaseCode: UseCaseCodeType
 
   _json2ts: Json2Ts
   _module: string
+
+  constructor() {
+    this._json2ts = new Json2Ts()
+    this._entityCode = {
+      entityTypeContent: [],
+      abstractClassList: {
+        abstractClassName: '',
+        abstractFuncList: []
+      }
+    }
+    this._entityCode.abstractClassList.abstractClassName = ''
+    this._entityCode.abstractClassList.abstractFuncList = []
+    this._entityCode.entityTypeContent = []
+  }
 
   clearSourceCode() {
     this._entityCode.abstractClassList.abstractFuncList = []
