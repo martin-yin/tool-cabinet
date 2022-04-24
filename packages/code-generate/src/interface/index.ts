@@ -12,7 +12,7 @@ export interface DomainType {
   repositorys: RepositoryType[]
 }
 
-export interface CodeGenerateOptionsType {
+export interface GenerateCodeOptionsType {
   filePath: string
   domains: DomainType[]
 }
@@ -24,31 +24,29 @@ export interface AbstractClassListType {
   abstractFuncList: AbstractFunc[]
 }
 
-export interface EntitySourceType {
+export interface EntityCodeType {
   entityTypeContent: string[]
   abstractClassList: AbstractClassListType
 }
 
-export interface ModelSourceType {
-  modelTypeContent: string[]
-}
+export type ModelCodeType = string[]
 
 export interface FuncType extends AbstractFunc {
   method: string
   requestUrl: string
 }
 
-export interface RepositorySourceType {
+export interface RepositoryCodeType {
   className: string
   abstractClassName: string
   funcList: FuncType[]
 }
 
-export interface SourceCodesType {
-  entitySource: EntitySourceType
-  modelSource: ModelSourceType
-  repositorySource: RepositorySourceType
-  useCaseSource: UseCaseSourceType
+export interface SourceCodeType {
+  entityCode: EntityCodeType
+  modelCode: ModelCodeType
+  repositoryCode: RepositoryCodeType
+  useCaseCode: UseCaseCodeType
 }
 
 export interface UseCaseType {
@@ -60,6 +58,4 @@ export interface UseCaseType {
   funcName: string
 }
 
-export interface UseCaseSourceType {
-  useCaseList: UseCaseType[]
-}
+export type UseCaseCodeType = UseCaseType[]

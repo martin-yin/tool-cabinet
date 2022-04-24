@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios'
 import parse from 'url-parse'
+import { RepositoryType } from '../interface'
 
 export function fristToUpperCase(str: string) {
   const newStr = str.trim().toLowerCase()
@@ -17,11 +18,13 @@ export function firstToLower(str: string) {
   return str.trim().replace(str[0], str[0].toLowerCase())
 }
 
-export function getNames(method: string, module: string, url: string) {
+export function getNames(module: string, repository: RepositoryType) {
+  const { method, url } = repository
   const { pathname } = parse(url)
   const pathnameArr = pathname.split('/')
   const last = pathnameArr[pathnameArr.length - 1]
   return {
+    method,
     entityType: fristToUpperCase(`${method}-${module}-entity`),
     paramsType: fristToUpperCase(`${method}-${module}-${last}-params`),
     modelName: fristToUpperCase(`${method}-${module}-model`),

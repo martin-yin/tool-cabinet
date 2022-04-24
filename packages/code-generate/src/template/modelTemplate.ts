@@ -1,7 +1,7 @@
-import { ModelSourceType } from '../interface'
+import { ModelCodeType } from '../interface'
 
-export const modelTemplate = ({ modelTypeContent }: ModelSourceType) => {
+export const modelTemplate = (modelCode: ModelCodeType) => {
   return `
-  ${modelTypeContent.join('\n')}
+  ${modelCode.join('\n')}
 `
 }

@@ -1,4 +1,4 @@
-import { SourceCodesType } from './interface'
+import { SourceCodeType } from './interface'
 import { entityTemplate } from './template/entityTemplate'
 import { modelTemplate } from './template/modelTemplate'
 import { repositoryTemplate } from './template/repositoryTemplate'
@@ -7,27 +7,29 @@ import { firstToLower } from './utils'
 import { generateFile } from './utils/file'
 import chalk from 'chalk'
 
-export interface FileWriteOptions {
+export interface WriteFileOptions {
   modulePath: string
   module: string
-  sourceCode: SourceCodesType
+  sourceCode: SourceCodeType
 }
 
-abstract class IFileWrite {
-  abstract writeFiles(): void
-  abstract writeEntityFile(): Promise<boolean>
-  abstract writeModelFile(): Promise<boolean>
-  abstract writeRepositoryFile(): Promise<boolean>
-  abstract writeUseCaseFiles(): Promise<void | any>
+export abstract class IWriteFile {
+  abstract writeFiles(): Promise<boolean>
+  abstract entityFileWrite(): Promise<boolean>
+  abstract modelFileWrite(): Promise<boolean>
+  abstract repositoryFileWrite(): Promise<boolean>
+  abstract useCaseFilesWrite(): Promise<void | any>
+
+  abstract runInit(options: WriteFileOptions): void
 }
 
-export class FileWrite implements IFileWrite {
-  private options: FileWriteOptions
+export class WriteFile implements IWriteFile {
+  private options: WriteFileOptions
   private modelDir: string
   private repositoryDir: string
   private applicationDir: string
 
-  init(options: FileWriteOptions) {
+  runInit(options: WriteFileOptions) {
     this.options = options
     this.modelDir = `${options.modulePath}/model`
     this.repositoryDir = `${options.modulePath}/repository`
@@ -36,48 +38,46 @@ export class FileWrite implements IFileWrite {
 
   async writeFiles() {
     console.log(chalk.blue(`\n开始创建文件...\n`))
-    const result = await Promise.all([this.writeEntityFile(), this.writeModelFile(), this.writeRepositoryFile()]).catch(
+    const result = await Promise.all([this.entityFileWrite(), this.modelFileWrite(), this.repositoryFileWrite()]).catch(
       error => {
         console.log(chalk.red(`失败原因：${error} \n`))
       }
     )
     if (result[0]) {
-      return await this.writeUseCaseFiles()
+      return await this.useCaseFilesWrite()
     }
     return false
   }
 
-  async writeEntityFile(): Promise<boolean> {
+  async entityFileWrite(): Promise<boolean> {
     const {
       module,
-      sourceCode: { entitySource }
+      sourceCode: { entityCode }
     } = this.options
-    return generateFile(this.modelDir, `${module}Entity.ts`, entityTemplate(entitySource))
+    return generateFile(this.modelDir, `${module}Entity.ts`, entityTemplate(entityCode))
   }
 
-  async writeModelFile(): Promise<boolean> {
+  async modelFileWrite(): Promise<boolean> {
     const {
       module,
-      sourceCode: { modelSource }
+      sourceCode: { modelCode }
     } = this.options
-    return generateFile(this.modelDir, `${module}Model.ts`, modelTemplate(modelSource))
+    return generateFile(this.modelDir, `${module}Model.ts`, modelTemplate(modelCode))
   }
 
-  async writeRepositoryFile(): Promise<boolean> {
+  async repositoryFileWrite(): Promise<boolean> {
     const {
       module,
-      sourceCode: { repositorySource }
+      sourceCode: { repositoryCode }
     } = this.options
-    return generateFile(this.repositoryDir, `${module}Repository.ts`, repositoryTemplate(repositorySource))
+    return generateFile(this.repositoryDir, `${module}Repository.ts`, repositoryTemplate(repositoryCode))
   }
 
-  async writeUseCaseFiles(): Promise<void | any> {
-    const {
-      useCaseSource: { useCaseList }
-    } = this.options.sourceCode
+  async useCaseFilesWrite(): Promise<void | any> {
+    const { useCaseCode } = this.options.sourceCode
 
     const useCaseWriteAll = []
-    for (const usecase of useCaseList) {
+    for (const usecase of useCaseCode) {
       useCaseWriteAll.push(
         generateFile(
           this.applicationDir,

@@ -1,6 +1,6 @@
-import { EntitySourceType } from '../interface'
+import { EntityCodeType } from '../interface'
 
-export const entityTemplate = ({ entityTypeContent, abstractClassList }: EntitySourceType) => {
+export const entityTemplate = ({ entityTypeContent, abstractClassList }: EntityCodeType) => {
   return `
     import { IResponse } from '@/infrastructure/lib/request'
     
