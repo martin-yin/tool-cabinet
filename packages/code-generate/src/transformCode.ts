@@ -1,4 +1,5 @@
 import chalk from 'chalk'
+import { isObject } from 'underscore'
 import {
   RepositoryType,
   DomainType,
@@ -11,7 +12,7 @@ import {
 import { firstToUpper, getPathName, repositoryRequest, getNames } from './utils'
 import { Json2Ts } from './utils/json2ts'
 
-type RepositoryCodeParams = {
+export type RepositoryCodeParams = {
   method: string
   paramsType: string
   funcName: string
@@ -20,7 +21,7 @@ type RepositoryCodeParams = {
 }
 
 export abstract class ITransformCode {
-  abstract clearSourceCode(): void
+  abstract initSourceCode(): void
   abstract transformEntityCode(result: any, entityType: string, funcName: string, paramsType: string): void
   abstract transformModelCode(repository: RepositoryType, paramsType: string): void
   abstract transformRepositoryCode(data: RepositoryCodeParams): void
@@ -39,6 +40,10 @@ export class TransformCode implements ITransformCode {
 
   constructor() {
     this._json2ts = new Json2Ts()
+    this.initSourceCode()
+  }
+
+  initSourceCode() {
     this._entityCode = {
       entityTypeContent: [],
       abstractClassList: {
@@ -46,16 +51,12 @@ export class TransformCode implements ITransformCode {
         abstractFuncList: []
       }
     }
-    this._entityCode.abstractClassList.abstractClassName = ''
-    this._entityCode.abstractClassList.abstractFuncList = []
-    this._entityCode.entityTypeContent = []
-  }
-
-  clearSourceCode() {
-    this._entityCode.abstractClassList.abstractFuncList = []
-    this._entityCode.entityTypeContent = []
     this._modelCode = []
-    this._repositoryCode.funcList = []
+    this._repositoryCode = {
+      className: '',
+      abstractClassName: '',
+      funcList: []
+    }
     this._useCaseCode = []
   }
 
@@ -114,14 +115,14 @@ export class TransformCode implements ITransformCode {
       // 抽离成一个函数 each repositorys
       const result = await repositoryRequest(repository)
       const { entityType, paramsType, funcName, method } = getNames(module, repository)
-      if (result) {
+      console.log(entityType, 'entityType')
+      if (result && isObject(result)) {
         this.transformEntityCode(result, entityType, funcName, paramsType)
         this.transformModelCode(repository, paramsType)
-        this.transformRepositoryCode({ method, paramsType, funcName, entityType, repository })
-        this.transformUseCaseCode(funcName, paramsType, entityType)
+        // this.transformRepositoryCode({ method, paramsType, funcName, entityType, repository })
+        // this.transformUseCaseCode(funcName, paramsType, entityType)
       } else {
-        console.log(chalk.blue(`${repository.url} 请求失败`))
-        break
+        throw Error(chalk.blue(`${repository.url} 请求失败 或 请求返回的数据不是对象`))
       }
     }
     return

@@ -18,6 +18,10 @@ export function firstToLower(str: string) {
   return str.trim().replace(str[0], str[0].toLowerCase())
 }
 
+export function isEmpty(str: string) {
+  return str.trim() === ''
+}
+
 export function getNames(module: string, repository: RepositoryType) {
   const { method, url } = repository
   const { pathname } = parse(url)
