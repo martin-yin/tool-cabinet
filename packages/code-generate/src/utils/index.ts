@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig, Method } from 'axios'
+import chalk from 'chalk'
 import parse from 'url-parse'
 import { RepositoryType } from '../interface'
 import { entityTemplate } from '../template/entityTemplate'
@@ -61,16 +62,17 @@ export function getUrlLast(url: string) {
   return last
 }
 
-export function getAbstractFunc(method: string, module: string, last: string) {
-  return firstToUpper(toLower(method)) + toUpperCaseBySymbol(`${module}-${last}`)
-}
-
 export async function repositoryRequest(config: AxiosRequestConfig): Promise<any> {
-  const result = await axios.request(config)
-  if (result.status == 200) {
-    return result.data
+  try {
+    const result = await axios.request(config)
+    if (result.status == 200) {
+      return result.data
+    }
+    return null
+  } catch (error) {
+    console.log(chalk.red(`失败原因：${error.toString()} \n`))
+    return null
   }
-  return null
 }
 
 export function transformType(data: string, typeName: string) {
@@ -90,7 +92,7 @@ export const getTemplate = new Proxy(template, {
     if (phrase in target) {
       return Reflect.get(target, phrase)
     } else {
-      throw Error(`没有查询到${phrase}Template 模板`)
+      throw new Error(`没有查询到${phrase}Template 模板`)
     }
   }
 })
