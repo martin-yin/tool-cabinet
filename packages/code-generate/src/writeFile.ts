@@ -21,6 +21,9 @@ export class WriteFile {
   async sourceCodeFileWrite(sourceCode: SourceCodeType): Promise<boolean> {
     const { fileName, filePath, template, code } = sourceCode
     const templateWrite = getTemplate[template]
-    return generateFile(filePath, fileName, templateWrite(code))
+    if (templateWrite) {
+      return generateFile(filePath, fileName, templateWrite(code))
+    }
+    return false
   }
 }

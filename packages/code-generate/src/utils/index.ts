@@ -92,7 +92,8 @@ export const getTemplate = new Proxy(template, {
     if (phrase in target) {
       return Reflect.get(target, phrase)
     } else {
-      throw new Error(`没有查询到${phrase}Template 模板`)
+      console.log(chalk.red(`没有查询到${phrase}Template 模板\n`))
+      return null
     }
   }
 })
