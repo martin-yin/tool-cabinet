@@ -1,13 +1,13 @@
-import { GenerateCodeOptionsType } from './interface'
 import chalk from 'chalk'
-import { IWriteFile } from './writeFile'
-import { ITransformCode } from './transformCode'
 import { isArray, isEmpty } from 'underscore'
+import { GenerateCodeOptionsType } from './interface'
+import { SourceCode } from './sourceCode/sourceCode'
+import { WriteFile } from './writeFile'
 
 export class GenerateCode {
   public options: GenerateCodeOptionsType
-  private transformCode: ITransformCode
-  private writeFile: IWriteFile
+  private sourceCode: SourceCode
+  private writeFile: WriteFile
 
   /**
    *
@@ -17,13 +17,11 @@ export class GenerateCode {
     options: GenerateCodeOptionsType = {
       filePath: '',
       domains: []
-    },
-    transformCode: ITransformCode,
-    writeFile: IWriteFile
+    }
   ) {
     this.options = options
-    this.transformCode = transformCode
-    this.writeFile = writeFile
+    this.sourceCode = new SourceCode()
+    this.writeFile = new WriteFile()
   }
 
   async run() {
@@ -44,15 +42,9 @@ export class GenerateCode {
     for (const domain of this.options.domains) {
       const { module } = domain
       const modulePath = `${this.options.filePath}/domain/${module}`
-      const code = await this.transformCode.transformSourceCode(domain)
-      this.writeFile.runInit({
-        modulePath,
-        module,
-        sourceCode: code
-      })
-      const result = await this.writeFile.writeFiles().finally(() => {
-        this.transformCode.initSourceCode()
-      })
+      await this.sourceCode.transformSourceCode(modulePath, domain)
+      const sourceCodeList = this.sourceCode.sourceCodeList
+      const result = this.writeFile.writeFiles(sourceCodeList)
       if (result) {
         console.log(chalk.green(`模块${module}写入完成!\n`))
       } else {

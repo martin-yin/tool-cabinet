@@ -1,4 +1,4 @@
-import { UseCaseType } from '../interface'
+import { UseCaseType } from '../interface/sourceCode'
 
 export const useCaseTemplate = (usecase: UseCaseType) => {
   return `

@@ -33,7 +33,7 @@ export async function generateFile(directory: string, file: string, data: string
 
   return new Promise((resolve, reject) => {
     fs.writeFile(`${directory}/${file}`, data, 'utf8', err => {
-      console.log(chalk.blue(`正在创建创建文件: ${directory} \n`))
+      console.log(chalk.blue(`正在创建创建文件: ${directory}${file} \n`))
       if (err) {
         console.log(chalk.red(`创建文件失败，${file}文件已经存在 \n`))
         reject(err)

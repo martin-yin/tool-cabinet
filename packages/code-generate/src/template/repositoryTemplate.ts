@@ -1,6 +1,6 @@
-import { RepositoryCodeType } from '../interface'
+import { RepositorySourceCodeType } from '../interface/sourceCode'
 
-export const repositoryTemplate = ({ className, abstractClassName, funcList }: RepositoryCodeType) => {
+export const repositoryTemplate = ({ className, abstractClassName, funcList }: RepositorySourceCodeType) => {
   return `
   import { HttpService } from '@/infrastructure/interface/http'
   import { IResponse } from '@/infrastructure/lib/request'

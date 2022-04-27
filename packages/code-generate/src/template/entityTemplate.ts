@@ -1,11 +1,11 @@
-import { EntityCodeType } from '../interface'
+import { EntitySourceCodeType } from '../interface/sourceCode'
 
-export const entityTemplate = ({ entityTypeContent, abstractClassList }: EntityCodeType) => {
+export const entityTemplate = ({ entityTypeContent, abstractClassName, abstractFuncList }: EntitySourceCodeType) => {
   return `
     import { IResponse } from '@/infrastructure/lib/request'
     
-    export abstract class ${abstractClassList.abstractClassName} {
-      ${abstractClassList.abstractFuncList
+    export abstract class ${abstractClassName} {
+      ${abstractFuncList
         .map(item => {
           return `abstract ${item.funcName}(${
             item.paramsType !== '' ? 'params: ' + item.paramsType : ''

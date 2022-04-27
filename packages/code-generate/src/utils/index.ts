@@ -1,17 +1,26 @@
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosRequestConfig, Method } from 'axios'
 import parse from 'url-parse'
 import { RepositoryType } from '../interface'
+import { entityTemplate } from '../template/entityTemplate'
+import { modelTemplate } from '../template/modelTemplate'
+import { repositoryTemplate } from '../template/repositoryTemplate'
+import { useCaseTemplate } from '../template/useCaseTemplate'
+import { Json2Ts } from './json2ts'
 
-export function fristToUpperCase(str: string) {
+export function toUpperCaseBySymbol(str: string, symbol = '-') {
   const newStr = str.trim().toLowerCase()
   return newStr
-    .split('-')
+    .split(symbol)
     .map((value: string) => firstToUpper(value))
     .join('')
 }
 
 export function firstToUpper(str: string) {
-  return str.trim().toLowerCase().replace(str[0], str[0].toUpperCase())
+  return str.trim().replace(str[0], str[0].toUpperCase())
+}
+
+export function toLower(str: string) {
+  return str.toLowerCase()
 }
 
 export function firstToLower(str: string) {
@@ -24,25 +33,36 @@ export function isEmpty(str: string) {
 
 export function getNames(module: string, repository: RepositoryType) {
   const { method, url } = repository
-  const { pathname } = parse(url)
-  const pathnameArr = pathname.split('/')
-  const last = pathnameArr[pathnameArr.length - 1]
+  const last = getUrlLast(url)
   return {
-    method,
-    entityType: fristToUpperCase(`${method}-${module}-entity`),
-    paramsType: fristToUpperCase(`${method}-${module}-${last}-params`),
-    modelName: fristToUpperCase(`${method}-${module}-model`),
-    funcName: getAbstractFunc(method, module, last)
+    method: toLower(method),
+    entityType: toUpperCaseBySymbol(`${method}-${module}-entity`),
+    paramsType: toUpperCaseBySymbol(`${method}-${module}-${last}-params`),
+    modelName: toUpperCaseBySymbol(`${method}-${module}-model`),
+    funcName: getFuncName(method, module, last)
   }
 }
 
-export function getAbstractFunc(method: string, module: string, last: string) {
-  return firstToUpper(method) + fristToUpperCase(`${module}-${last}`)
+export function getFuncName(method: Method, module: string, last: string) {
+  let api = ''
+  const fristUpperMethod = toLower(method)
+  if (last === module) {
+    api = firstToUpper(`${module}`)
+  } else {
+    api = toUpperCaseBySymbol(`${module}-${last}`)
+  }
+  return `${fristUpperMethod}${api}`
 }
 
-export function getPathName(url: string) {
+export function getUrlLast(url: string) {
   const { pathname } = parse(url)
-  return pathname
+  const pathnameArr = pathname.split('/')
+  const last = pathnameArr[pathnameArr.length - 1]
+  return last
+}
+
+export function getAbstractFunc(method: string, module: string, last: string) {
+  return firstToUpper(toLower(method)) + toUpperCaseBySymbol(`${module}-${last}`)
 }
 
 export async function repositoryRequest(config: AxiosRequestConfig): Promise<any> {
@@ -52,3 +72,25 @@ export async function repositoryRequest(config: AxiosRequestConfig): Promise<any
   }
   return null
 }
+
+export function transformType(data: string, typeName: string) {
+  const json2ts = new Json2Ts()
+  return json2ts.convert(data, typeName)
+}
+
+const template = {
+  entity: entityTemplate,
+  model: modelTemplate,
+  repository: repositoryTemplate,
+  useCase: useCaseTemplate
+}
+
+export const getTemplate = new Proxy(template, {
+  get(target, phrase: string) {
+    if (phrase in target) {
+      return Reflect.get(target, phrase)
+    } else {
+      throw Error(`没有查询到${phrase}Template 模板`)
+    }
+  }
+})
