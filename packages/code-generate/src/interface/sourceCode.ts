@@ -1,12 +1,12 @@
 import { RepositoryType } from '.'
 
-export type TemplateType = 'entity' | 'model' | 'repository' | 'useCase'
+export type TemplateType = 'entity' | 'model' | 'repository' | 'useCase' | any
 export type CodeType = EntitySourceCodeType | ModelSourceCodeType | RepositorySourceCodeType | UseCaseType
 
 export type SourceCodeType = {
   filePath: string
   fileName: string
-  template: 'entity' | 'model' | 'repository' | 'useCase' | any
+  template: TemplateType
   code: CodeType
 }
 export type SourceCodeListType = Array<SourceCodeType>
@@ -28,13 +28,8 @@ export interface RepositoryFuncType extends AbstractFunc {
   requestUrl: string
 }
 
-export type RepositoryCodeParams = {
-  method: string
-  paramsType: string
-  funcName: string
-  entityType: string
-  repository: RepositoryType
-}
+export type RepositoryCodeParams = Record<'method' | 'paramsType' | 'funcName' | 'entityType', string> &
+  Record<'repository', RepositoryType>
 
 export type RepositorySourceCodeType = {
   className: string
@@ -42,25 +37,17 @@ export type RepositorySourceCodeType = {
   funcList: RepositoryFuncType[]
 }
 
-export type UseCaseType = {
-  fileName: string
-  classeName: string
-  paramsType: string
-  abstractClass: string
-  abstractClassType: string
-  returnType: string
-  funcName: string
-}
+export type UseCaseType = Record<
+  'fileName' | 'classeName' | 'paramsType' | 'abstractClass' | 'abstractClassType' | 'returnType' | 'funcName',
+  string
+>
+
 export type UseCaseListType = UseCaseType[]
 
 export type UseCaseSourceCodeType = Array<SourceCodeType>
 
-export type SourceCodesParams = {
-  entityType: string
-  entityTypeContent: string
-  module: string
-  funcName: string
-  paramsType: string
-  repository: RepositoryType
-  method: string
-}
+export type SourceCodesParams = Record<
+  'entityType' | 'entityTypeContent' | 'module' | 'funcName' | 'paramsType' | 'method',
+  string
+> &
+  Record<'repository', RepositoryType>

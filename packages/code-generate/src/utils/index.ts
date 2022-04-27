@@ -62,6 +62,11 @@ export function getUrlLast(url: string) {
   return last
 }
 
+export function getPathName(url: string) {
+  const { pathname } = parse(url)
+  return pathname
+}
+
 export async function repositoryRequest(config: AxiosRequestConfig): Promise<any> {
   try {
     const result = await axios.request(config)
