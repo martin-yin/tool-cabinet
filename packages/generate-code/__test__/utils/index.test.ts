@@ -8,7 +8,7 @@ import {
   getTemplate
 } from '../../src/utils'
 
-jest.mock('chalk', () => ({
+jest.mock('colors', () => ({
   green: jest.fn(),
   blue: jest.fn(),
   red: jest.fn()

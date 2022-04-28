@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "noImplicitAny": false,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "outDir": "dist",
+    "sourceMap": false,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "allowJs": false,
+    "strict": false,
+    "noUnusedLocals": true,
+    "resolveJsonModule": true,
+    "allowUnreachableCode": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "target": "ES2019",
+    "lib": ["ESNext"],
+  },
+  "include": ["src/**/*.ts", "__test__/**/*.ts", "src/cli.js"],
+  "exclude": ["./dist"]
+}

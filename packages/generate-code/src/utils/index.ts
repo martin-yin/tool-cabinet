@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, Method } from 'axios'
-import chalk from 'chalk'
+import colors from 'picocolors'
 import parse from 'url-parse'
 import { RepositoryType } from '../interface'
 import { entityTemplate } from '../template/entityTemplate'
@@ -75,7 +75,7 @@ export async function repositoryRequest(config: AxiosRequestConfig): Promise<any
     }
     return null
   } catch (error) {
-    console.log(chalk.red(`失败原因：${error.toString()} \n`))
+    console.log(colors.red(`失败原因：${error.toString()} \n`))
     return null
   }
 }
@@ -97,7 +97,7 @@ export const getTemplate = new Proxy(template, {
     if (phrase in target) {
       return Reflect.get(target, phrase)
     } else {
-      console.log(chalk.red(`没有查询到${phrase}Template 模板\n`))
+      console.log(colors.red(`没有查询到${phrase}Template 模板\n`))
       return null
     }
   }

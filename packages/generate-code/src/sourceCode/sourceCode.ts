@@ -1,4 +1,3 @@
-import chalk from 'chalk'
 import { isObject } from 'underscore'
 import { DomainType } from '../interface'
 import { SourceCodeListType, SourceCodesParams } from '../interface/sourceCode'
@@ -29,7 +28,7 @@ export class SourceCode {
         const entityTypeContent = transformType(JSON.stringify(result), entityType)
         this.pushSourceCodes({ entityType, entityTypeContent, module, funcName, paramsType, repository, method })
       } else {
-        throw Error(chalk.blue(`${repository.url} 请求失败 或 请求返回的数据不是对象`))
+        throw Error(`${repository.url} 请求失败 或 请求返回的数据不是对象`)
       }
     }
     this.combinationSourceCode()

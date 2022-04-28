@@ -2,7 +2,7 @@ import path from 'path'
 import { dotExistDirectoryCreate, generateFile } from '../../src/utils/file'
 import fs from 'fs'
 
-jest.mock('chalk', () => ({
+jest.mock('colors', () => ({
   green: jest.fn(),
   blue: jest.fn(),
   red: jest.fn()

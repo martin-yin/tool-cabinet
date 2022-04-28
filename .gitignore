@@ -25,3 +25,5 @@ yarn-error.log*
 /docs/.vitepress/dist
 
 /code-generate/src/domain
+
+/packages/code-generate/dist
