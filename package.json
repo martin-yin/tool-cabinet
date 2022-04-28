@@ -5,6 +5,7 @@
   "private": true,
   "main": "",
   "scripts": {
+    "format": "prettier --write packages/**/*.{ts,js,tsx}",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs",
@@ -40,5 +41,11 @@
     "jest": "^27.5.1",
     "lerna": "^4.0.0",
     "typescript": "^4.6.3"
+  },
+  "lint-staged": {
+    "packages/**/*.{ts,js,tsx}": [
+      "pnpm run format",
+      "git add"
+    ]
   }
 }

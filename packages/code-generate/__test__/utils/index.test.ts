@@ -94,9 +94,8 @@ describe('index.test.ts', () => {
 
   describe('Test getTemplate', () => {
     test('not found template', () => {
-      expect(() => {
-        return getTemplate['not']
-      }).toThrowError(`没有查询到notTemplate 模板`)
+      const template = getTemplate['not']
+      expect(template).toBeNull()
     })
   })
 })
