@@ -12,7 +12,7 @@ export interface DomainType {
   repositorys: RepositoryType[]
 }
 
-export interface GenerateCodeOptionsType {
+export interface GenerateRequestCodeOptionsType {
   filePath: string
   domains: DomainType[]
 }

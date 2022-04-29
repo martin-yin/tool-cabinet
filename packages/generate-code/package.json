@@ -1,6 +1,7 @@
 {
-  "name": "generate-code",
+  "name": "generate-request-code",
   "version": "0.0.1",
+  "private": false,
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "dev": "rollup -w -c rollup.config.js",
@@ -8,9 +9,10 @@
   },
   "main": "dist/index.js",
   "bin": {
-    "generate-code": "bin/index.js"
+    "generate-request-code": "bin/index.js"
   },
-  "author": "",
+  "author": "martin-yin",
+  "homepage": "https://github.com/martin-yin/web-dev-tools/tree/main/packages/generate-code",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {

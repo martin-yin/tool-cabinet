@@ -6,15 +6,15 @@ sidebarDepth: 2
 
 开发前端时沉淀的一些工具
 
-## code-generate
+## generate-request-code
 
-此工具只适用于采用了"整洁架构"模式的项目。
+适用于采用了"整洁架构"模式的项目。
 
-通过配置文件, `code-eenerate` 会自动请求接口，当接口请求成功时,通过调用`json2ts`将接口返回的数据转换成 `typescript` 类型。
+通过配置文件, `generate-request-code` 会自动请求接口，当接口请求成功时,通过调用`json2ts`将接口返回的数据转换成 `typescript` 类型。
 
 转换成功后, 调用默认模板生成对应的文件。
 
-[code-generate](https://github.com/martin-yin/web-dev-tools/tree/main/packages/code-generate)
+[generate-request-code](https://github.com/martin-yin/web-dev-tools/tree/main/packages/generate-request-code)
 
 ## tsyringe-auto-inject
 

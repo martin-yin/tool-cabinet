@@ -1,12 +1,11 @@
 import cac from 'cac'
 import fs from 'fs'
 import path from 'path'
-import { GenerateCode } from './generateCode'
+import { GenerateRequestCode } from './generateRequestCode'
 const rootPath = process.cwd()
 
 function cliInit() {
-  const packageJson = require(path.resolve(rootPath, './package.json'))
-  const cli = cac(packageJson.name)
+  const cli = cac('generate-request-code')
   cli.option('--config', 'config path')
   return cli.parse()
 }
@@ -20,8 +19,8 @@ function start() {
     if (config.filePath == '') {
       throw new Error('配置文件地址不能为空')
     }
-    const generateCode = new GenerateCode(config)
-    generateCode.run()
+    const generateRequestCode = new GenerateRequestCode(config)
+    generateRequestCode.run()
   } catch (error) {
     throw new Error(`读取配置文件错误: ${error.message}`)
   }

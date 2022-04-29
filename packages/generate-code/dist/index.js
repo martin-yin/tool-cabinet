@@ -523,7 +523,7 @@ class WriteFile {
   }
 }
 
-class GenerateCode {
+class GenerateRequestCode {
   constructor(options) {
     this.options = options;
     this.sourceCode = new SourceCode();
@@ -552,8 +552,7 @@ class GenerateCode {
 
 const rootPath = process.cwd();
 function cliInit() {
-  const packageJson = require(path__default.resolve(rootPath, "./package.json"));
-  const cli = cac__default(packageJson.name);
+  const cli = cac__default("generate-request-code");
   cli.option("--config", "config path");
   return cli.parse();
 }
@@ -566,8 +565,8 @@ function start() {
     if (config.filePath == "") {
       throw new Error("\u914D\u7F6E\u6587\u4EF6\u5730\u5740\u4E0D\u80FD\u4E3A\u7A7A");
     }
-    const generateCode = new GenerateCode(config);
-    generateCode.run();
+    const generateRequestCode = new GenerateRequestCode(config);
+    generateRequestCode.run();
   } catch (error) {
     throw new Error(`\u8BFB\u53D6\u914D\u7F6E\u6587\u4EF6\u9519\u8BEF: ${error.message}`);
   }

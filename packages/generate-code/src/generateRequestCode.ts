@@ -1,10 +1,10 @@
 import colors from 'picocolors'
-import { GenerateCodeOptionsType } from './interface'
+import { GenerateRequestCodeOptionsType } from './interface'
 import { SourceCode } from './sourceCode/sourceCode'
 import { WriteFile } from './writeFile'
 
-export class GenerateCode {
-  public options: GenerateCodeOptionsType
+export class GenerateRequestCode {
+  public options: GenerateRequestCodeOptionsType
   private sourceCode: SourceCode
   private writeFile: WriteFile
 
@@ -12,7 +12,7 @@ export class GenerateCode {
    *
    * @param options
    */
-  constructor(options: GenerateCodeOptionsType) {
+  constructor(options: GenerateRequestCodeOptionsType) {
     this.options = options
     this.sourceCode = new SourceCode()
     this.writeFile = new WriteFile()
