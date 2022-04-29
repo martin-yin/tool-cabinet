@@ -12,7 +12,7 @@
     "generate-request-code": "bin/index.js"
   },
   "author": "martin-yin",
-  "homepage": "https://github.com/martin-yin/web-dev-tools/tree/main/packages/generate-code",
+  "homepage": "https://github.com/martin-yin/web-dev-tools/tree/main/packages/generate-request-code",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
