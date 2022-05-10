@@ -34,11 +34,14 @@ export function isEmpty(str: string) {
 
 export function getNames(module: string, repository: RepositoryType) {
   const { method, url } = repository
+
+  // 如果last 是number的话
   const last = getUrlLast(url)
+  const paramsType = isNaN(parseInt(last)) ? `${method}-${module}-${last}-params` : `${method}-${module}-params`
   return {
     method: toLower(method),
     entityType: toUpperCaseBySymbol(`${method}-${module}-entity`),
-    paramsType: toUpperCaseBySymbol(`${method}-${module}-${last}-params`),
+    paramsType: toUpperCaseBySymbol(paramsType),
     modelName: toUpperCaseBySymbol(`${method}-${module}-model`),
     funcName: getFuncName(method, module, last)
   }
@@ -50,7 +53,8 @@ export function getFuncName(method: Method, module: string, last: string) {
   if (last === module) {
     api = firstToUpper(`${module}`)
   } else {
-    api = toUpperCaseBySymbol(`${module}-${last}`)
+    const apiName = isNaN(parseInt(last)) ? `${module}-${last}` : module
+    api = toUpperCaseBySymbol(apiName)
   }
   return `${fristUpperMethod}${api}`
 }
@@ -70,7 +74,7 @@ export function getPathName(url: string) {
 export async function repositoryRequest(config: AxiosRequestConfig): Promise<any> {
   try {
     const result = await axios.request(config)
-    if (result.status == 200) {
+    if (result.status < 300) {
       return result.data
     }
     return null

@@ -4,7 +4,7 @@ export interface RepositoryType {
   url: string
   method: Method
   params?: any
-  body?: any
+  data?: any
 }
 
 export interface DomainType {

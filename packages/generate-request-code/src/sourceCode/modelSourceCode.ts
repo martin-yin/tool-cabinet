@@ -23,8 +23,8 @@ export class ModelSourceCode {
       modelTypeContent = transformType(JSON.stringify(repository.params), paramsType)
     }
     // 判断 是否存在body 参数
-    if (repository?.body) {
-      modelTypeContent = transformType(JSON.stringify(repository.body), paramsType)
+    if (repository?.data) {
+      modelTypeContent = transformType(JSON.stringify(repository.data), paramsType)
     }
     return modelTypeContent
   }

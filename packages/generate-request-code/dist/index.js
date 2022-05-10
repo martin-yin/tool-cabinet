@@ -233,10 +233,11 @@ function firstToLower(str) {
 function getNames(module, repository) {
   const { method, url } = repository;
   const last = getUrlLast(url);
+  const paramsType = isNaN(parseInt(last)) ? `${method}-${module}-${last}-params` : `${method}-${module}-params`;
   return {
     method: toLower(method),
     entityType: toUpperCaseBySymbol(`${method}-${module}-entity`),
-    paramsType: toUpperCaseBySymbol(`${method}-${module}-${last}-params`),
+    paramsType: toUpperCaseBySymbol(paramsType),
     modelName: toUpperCaseBySymbol(`${method}-${module}-model`),
     funcName: getFuncName(method, module, last)
   };
@@ -247,7 +248,8 @@ function getFuncName(method, module, last) {
   if (last === module) {
     api = firstToUpper(`${module}`);
   } else {
-    api = toUpperCaseBySymbol(`${module}-${last}`);
+    const apiName = isNaN(parseInt(last)) ? `${module}-${last}` : module;
+    api = toUpperCaseBySymbol(apiName);
   }
   return `${fristUpperMethod}${api}`;
 }
@@ -264,7 +266,7 @@ function getPathName(url) {
 async function repositoryRequest(config) {
   try {
     const result = await axios__default.request(config);
-    if (result.status == 200) {
+    if (result.status < 300) {
       return result.data;
     }
     return null;
@@ -340,8 +342,8 @@ class ModelSourceCode {
     if (repository == null ? void 0 : repository.params) {
       modelTypeContent = transformType(JSON.stringify(repository.params), paramsType);
     }
-    if (repository == null ? void 0 : repository.body) {
-      modelTypeContent = transformType(JSON.stringify(repository.body), paramsType);
+    if (repository == null ? void 0 : repository.data) {
+      modelTypeContent = transformType(JSON.stringify(repository.data), paramsType);
     }
     return modelTypeContent;
   }
@@ -462,7 +464,7 @@ class SourceCode {
   }
 }
 
-async function dotExistDirectoryCreate(directory) {
+async function existDirectoryCreate(directory) {
   const { dir } = path__default.parse(directory);
   if (_.isEmpty(dir)) {
     console.log("\u8DEF\u5F84\u4E0D\u80FD\u4E3A\u7A7A");
@@ -471,16 +473,15 @@ async function dotExistDirectoryCreate(directory) {
   if (fs__default.existsSync(directory)) {
     return true;
   }
-  fs__default.mkdirSync(directory, { recursive: true });
-  return true;
+  return fs__default.mkdirSync(directory, { recursive: true });
 }
-async function generateFile(directory, file, data) {
+function generateFile(directory, file, data) {
   if (fs__default.existsSync(`${directory}/${file}`)) {
     console.log(colors__default.red(`\u521B\u5EFA\u6587\u4EF6\u5931\u8D25\uFF0C${file}\u6587\u4EF6\u5DF2\u7ECF\u5B58\u5728 
 `));
     return false;
   }
-  if (await dotExistDirectoryCreate(directory)) {
+  if (existDirectoryCreate(directory)) {
     console.log(colors__default.blue(`\u6B63\u5728\u521B\u5EFA\u521B\u5EFA\u6587\u4EF6: ${directory}${file} 
 `));
     try {

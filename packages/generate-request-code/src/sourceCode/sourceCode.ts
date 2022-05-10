@@ -28,6 +28,7 @@ export class SourceCode {
         const entityTypeContent = transformType(JSON.stringify(result), entityType)
         this.pushSourceCodes({ entityType, entityTypeContent, module, funcName, paramsType, repository, method })
       } else {
+        // TODO封装错误函数
         throw Error(`${repository.url} 请求失败 或 请求返回的数据不是对象`)
       }
     }
