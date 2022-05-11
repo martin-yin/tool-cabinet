@@ -32,10 +32,9 @@ export function isEmpty(str: string) {
   return str.trim() === ''
 }
 
-// TODO: 拆成一个个单独的方法。
+// TODO: 拆成一个个单独的方法, getNames 职责太多。
 export function getNames(module: string, repository: RepositoryType) {
   const { method, url } = repository
-  // 如果last 是number的话
   const last = getUrlLast(url)
   const entityType = `${method}-${module}-entity`
   const paramsType = isEmpty(last) ? `${method}-${module}-params` : `${method}-${module}-${last}-params`
@@ -49,13 +48,12 @@ export function getNames(module: string, repository: RepositoryType) {
   }
 }
 
-// TODO: 看看怎么优化
 export function getFuncName(method: Method, module: string, last: string) {
   let api = ''
   if (last === module) {
     api = firstToUpper(`${module}`)
   } else {
-    const apiName = isEmpty(last) ? `${module}-${last}` : module
+    const apiName = isEmpty(last) ? module : `${module}-${last}`
     api = toUpperCaseBySymbol(apiName)
   }
   return `${toLower(method)}${api}`

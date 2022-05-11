@@ -8,11 +8,11 @@ import {
   getTemplate
 } from '../../src/utils'
 
-jest.mock('colors', () => ({
-  green: jest.fn(),
-  blue: jest.fn(),
-  red: jest.fn()
-}))
+// jest.mock('colors', () => ({
+//   green: jest.fn(),
+//   blue: jest.fn(),
+//   red: jest.fn()
+// }))
 
 describe('index.test.ts', () => {
   const url = 'https://www.fastmock.site/mock/41fa03b4c7422029e00ec4ee0c8063d2/eno-component/api/video'
@@ -33,6 +33,21 @@ describe('index.test.ts', () => {
       modelName: 'GetUserModel',
       funcName: 'getUserVideo'
     })
+  })
+
+  test('Test getNames by url number', () => {
+    const names = getNames('user', {
+      url: 'http://127.0.0.1/article/10',
+      method: 'GET'
+    })
+    console.log(names, '========')
+    // expect(names).toEqual({
+    //   method: 'get',
+    //   entityType: 'GetUserEntity',
+    //   paramsType: 'GetUserVideoParams',
+    //   modelName: 'GetUserModel',
+    //   funcName: 'getUserVideo'
+    // })
   })
 
   test('Test getFuncName', () => {

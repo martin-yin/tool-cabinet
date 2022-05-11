@@ -252,7 +252,7 @@ function getFuncName(method, module, last) {
   if (last === module) {
     api = firstToUpper(`${module}`);
   } else {
-    const apiName = isEmpty(last) ? `${module}-${last}` : module;
+    const apiName = isEmpty(last) ? module : `${module}-${last}`;
     api = toUpperCaseBySymbol(apiName);
   }
   return `${toLower(method)}${api}`;
@@ -531,8 +531,8 @@ class WriteFile {
 
 class GenerateRequestCode {
   constructor(options) {
-    this.options = options;
     this.sourceCode = new SourceCode();
+    this.options = options;
   }
   async run() {
     const {
