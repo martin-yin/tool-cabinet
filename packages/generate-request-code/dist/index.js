@@ -230,34 +230,38 @@ function toLower(str) {
 function firstToLower(str) {
   return str.trim().replace(str[0], str[0].toLowerCase());
 }
+function isEmpty(str) {
+  return str.trim() === "";
+}
 function getNames(module, repository) {
   const { method, url } = repository;
   const last = getUrlLast(url);
-  const paramsType = isNaN(parseInt(last)) ? `${method}-${module}-${last}-params` : `${method}-${module}-params`;
+  const entityType = `${method}-${module}-entity`;
+  const paramsType = isEmpty(last) ? `${method}-${module}-params` : `${method}-${module}-${last}-params`;
+  const modelName = `${method}-${module}-model`;
   return {
     method: toLower(method),
-    entityType: toUpperCaseBySymbol(`${method}-${module}-entity`),
+    entityType: toUpperCaseBySymbol(entityType),
     paramsType: toUpperCaseBySymbol(paramsType),
-    modelName: toUpperCaseBySymbol(`${method}-${module}-model`),
+    modelName: toUpperCaseBySymbol(modelName),
     funcName: getFuncName(method, module, last)
   };
 }
 function getFuncName(method, module, last) {
   let api = "";
-  const fristUpperMethod = toLower(method);
   if (last === module) {
     api = firstToUpper(`${module}`);
   } else {
-    const apiName = isNaN(parseInt(last)) ? `${module}-${last}` : module;
+    const apiName = isEmpty(last) ? `${module}-${last}` : module;
     api = toUpperCaseBySymbol(apiName);
   }
-  return `${fristUpperMethod}${api}`;
+  return `${toLower(method)}${api}`;
 }
 function getUrlLast(url) {
   const { pathname } = parse__default(url);
   const pathnameArr = pathname.split("/");
   const last = pathnameArr[pathnameArr.length - 1];
-  return last;
+  return isNaN(parseInt(last)) ? last : "";
 }
 function getPathName(url) {
   const { pathname } = parse__default(url);
@@ -441,6 +445,7 @@ class SourceCode {
       }
     }
     this.combinationSourceCode();
+    return this.sourceCodeList;
   }
   combinationSourceCode() {
     this.sourceCodeList.push(...[
@@ -498,7 +503,7 @@ function generateFile(directory, file, data) {
 }
 
 class WriteFile {
-  async writeFiles(sourceCodeList) {
+  static async writeFiles(sourceCodeList) {
     console.log(colors__default.blue(`
 \u5F00\u59CB\u521B\u5EFA\u6587\u4EF6...
 `));
@@ -514,7 +519,7 @@ class WriteFile {
     }
     return false;
   }
-  async sourceCodeFileWrite(sourceCode) {
+  static async sourceCodeFileWrite(sourceCode) {
     const { fileName, filePath, template, code } = sourceCode;
     const templateWrite = getTemplate[template];
     if (templateWrite) {
@@ -528,7 +533,6 @@ class GenerateRequestCode {
   constructor(options) {
     this.options = options;
     this.sourceCode = new SourceCode();
-    this.writeFile = new WriteFile();
   }
   async run() {
     const {
@@ -537,9 +541,8 @@ class GenerateRequestCode {
     for (const domain of domains) {
       const { module } = domain;
       const modulePath = `${filePath}/domain/${module}`;
-      await this.sourceCode.transformSourceCode(modulePath, domain);
-      const sourceCodeList = this.sourceCode.sourceCodeList;
-      const result = await this.writeFile.writeFiles(sourceCodeList);
+      const sourceCodeList = await this.sourceCode.transformSourceCode(modulePath, domain);
+      const result = await WriteFile.writeFiles(sourceCodeList);
       if (result) {
         console.log(colors__default.green(`\u6A21\u5757${module}\u5199\u5165\u5B8C\u6210!
 `));

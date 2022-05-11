@@ -5,17 +5,13 @@ import { WriteFile } from './writeFile'
 
 export class GenerateRequestCode {
   public options: GenerateRequestCodeOptionsType
-  private sourceCode: SourceCode
-  private writeFile: WriteFile
-
+  private sourceCode: SourceCode = new SourceCode()
   /**
    *
    * @param options
    */
   constructor(options: GenerateRequestCodeOptionsType) {
     this.options = options
-    this.sourceCode = new SourceCode()
-    this.writeFile = new WriteFile()
   }
 
   async run() {
@@ -26,9 +22,8 @@ export class GenerateRequestCode {
     for (const domain of domains) {
       const { module } = domain
       const modulePath = `${filePath}/domain/${module}`
-      await this.sourceCode.transformSourceCode(modulePath, domain)
-      const sourceCodeList = this.sourceCode.sourceCodeList
-      const result = await this.writeFile.writeFiles(sourceCodeList)
+      const sourceCodeList = await this.sourceCode.transformSourceCode(modulePath, domain)
+      const result = await WriteFile.writeFiles(sourceCodeList)
       if (result) {
         console.log(colors.green(`模块${module}写入完成!\n`))
       } else {

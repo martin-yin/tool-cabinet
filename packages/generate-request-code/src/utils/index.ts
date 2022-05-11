@@ -32,38 +32,40 @@ export function isEmpty(str: string) {
   return str.trim() === ''
 }
 
+// TODO: 拆成一个个单独的方法。
 export function getNames(module: string, repository: RepositoryType) {
   const { method, url } = repository
-
   // 如果last 是number的话
   const last = getUrlLast(url)
-  const paramsType = isNaN(parseInt(last)) ? `${method}-${module}-${last}-params` : `${method}-${module}-params`
+  const entityType = `${method}-${module}-entity`
+  const paramsType = isEmpty(last) ? `${method}-${module}-params` : `${method}-${module}-${last}-params`
+  const modelName = `${method}-${module}-model`
   return {
     method: toLower(method),
-    entityType: toUpperCaseBySymbol(`${method}-${module}-entity`),
+    entityType: toUpperCaseBySymbol(entityType),
     paramsType: toUpperCaseBySymbol(paramsType),
-    modelName: toUpperCaseBySymbol(`${method}-${module}-model`),
+    modelName: toUpperCaseBySymbol(modelName),
     funcName: getFuncName(method, module, last)
   }
 }
 
+// TODO: 看看怎么优化
 export function getFuncName(method: Method, module: string, last: string) {
   let api = ''
-  const fristUpperMethod = toLower(method)
   if (last === module) {
     api = firstToUpper(`${module}`)
   } else {
-    const apiName = isNaN(parseInt(last)) ? `${module}-${last}` : module
+    const apiName = isEmpty(last) ? `${module}-${last}` : module
     api = toUpperCaseBySymbol(apiName)
   }
-  return `${fristUpperMethod}${api}`
+  return `${toLower(method)}${api}`
 }
 
 export function getUrlLast(url: string) {
   const { pathname } = parse(url)
   const pathnameArr = pathname.split('/')
   const last = pathnameArr[pathnameArr.length - 1]
-  return last
+  return isNaN(parseInt(last)) ? last : ''
 }
 
 export function getPathName(url: string) {

@@ -21,7 +21,6 @@ export class SourceCode {
     this.repositorySourceCode = new RepositorySourceCode(modulePath, module)
     this.useCaseSourceCode = new UseCaseSourceCode(modulePath, module)
     for (const repository of repositorys) {
-      // 抽离成一个函数 each repositorys
       const result = await repositoryRequest(repository)
       const { entityType, paramsType, funcName, method } = getNames(module, repository)
       if (result && isObject(result)) {
@@ -33,6 +32,7 @@ export class SourceCode {
       }
     }
     this.combinationSourceCode()
+    return this.sourceCodeList
   }
 
   private combinationSourceCode() {
