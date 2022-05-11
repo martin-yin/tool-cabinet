@@ -36,16 +36,32 @@ export function isEmpty(str: string) {
 export function getNames(module: string, repository: RepositoryType) {
   const { method, url } = repository
   const last = getUrlLast(url)
-  const entityType = `${method}-${module}-entity`
-  const paramsType = isEmpty(last) ? `${method}-${module}-params` : `${method}-${module}-${last}-params`
-  const modelName = `${method}-${module}-model`
   return {
-    method: toLower(method),
-    entityType: toUpperCaseBySymbol(entityType),
-    paramsType: toUpperCaseBySymbol(paramsType),
-    modelName: toUpperCaseBySymbol(modelName),
+    method: getMethod(method),
+    entityType: getEntityType(method, module),
+    paramsType: repository.params || repository.data ? getParamsType(method, module, last) : '',
+    modelName: getModelName(method, module),
     funcName: getFuncName(method, module, last)
   }
+}
+
+export function getModelName(method: string, module: string) {
+  const modelName = `${method}-${module}-model`
+  return toUpperCaseBySymbol(modelName)
+}
+
+export function getEntityType(method: string, module: string) {
+  const entityType = `${method}-${module}-entity`
+  return toUpperCaseBySymbol(entityType)
+}
+
+export function getMethod(method: string) {
+  return toLower(method)
+}
+
+export function getParamsType(method: string, module: string, last: string) {
+  const paramsType = isEmpty(last) ? `${method}-${module}-by-id-params` : `${method}-${module}-${last}-params`
+  return toUpperCaseBySymbol(paramsType)
 }
 
 export function getFuncName(method: Method, module: string, last: string) {
@@ -53,7 +69,7 @@ export function getFuncName(method: Method, module: string, last: string) {
   if (last === module) {
     api = firstToUpper(`${module}`)
   } else {
-    const apiName = isEmpty(last) ? module : `${module}-${last}`
+    const apiName = isEmpty(last) ? `${module}-by-id` : `${module}-${last}`
     api = toUpperCaseBySymbol(apiName)
   }
   return `${toLower(method)}${api}`

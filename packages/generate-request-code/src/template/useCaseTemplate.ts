@@ -7,16 +7,16 @@ export const useCaseTemplate = (usecase: UseCaseType) => {
   import { inject, injectable } from 'tsyringe'
 
   @injectable()
-  export class ${usecase.classeName} implements UseCase<${usecase.paramsType}, ${usecase.paramsType}> {
+  export class ${usecase.classeName} implements UseCase<${usecase.paramsType === '' ? 'void' : usecase.paramsType}, ${
+    usecase.returnType
+  }> {
     constructor(
       @inject('${usecase.abstractClassType}') private ${usecase.abstractClass}: ${usecase.abstractClassType},
       @inject('MessageService') private messageService: MessageService,
     ) {}
-    async execute(${usecase.paramsType === 'void' ? '' : 'params:' + usecase.paramsType}): Promise<${
-    usecase.paramsType
-  }> {
+    async execute(${usecase.paramsType === '' ? '' : 'params:' + usecase.paramsType}): Promise<${usecase.returnType}> {
       const { data, code, msg } = await this.${usecase.abstractClass}.${usecase.funcName}${
-    usecase.paramsType === 'void' ? '' : '(params)'
+    usecase.paramsType === '' ? '()' : '(params)'
   }
       if (code === 200) {
         return data

@@ -1,7 +1,8 @@
+import { RepositoryRequest } from '../utils/request'
 import { isObject } from 'underscore'
 import { DomainType } from '../interface'
 import { SourceCodeListType, SourceCodesParams } from '../interface/sourceCode'
-import { getNames, repositoryRequest, transformType } from '../utils'
+import { getNames, transformType } from '../utils'
 import { EntitySourceCode } from './entitySourceCode'
 import { ModelSourceCode } from './modelSourceCode'
 import { RepositorySourceCode } from './repositorySourceCode'
@@ -14,14 +15,15 @@ export class SourceCode {
   private useCaseSourceCode: UseCaseSourceCode
   sourceCodeList: SourceCodeListType = []
 
-  async transformSourceCode(modulePath: string, domain: DomainType) {
+  async transformSourceCode(service: RepositoryRequest, modulePath: string, domain: DomainType) {
     const { module, repositorys } = domain
     this.entitySourceCode = new EntitySourceCode(modulePath, module)
     this.modelSourceCode = new ModelSourceCode(modulePath, module)
     this.repositorySourceCode = new RepositorySourceCode(modulePath, module)
     this.useCaseSourceCode = new UseCaseSourceCode(modulePath, module)
     for (const repository of repositorys) {
-      const result = await repositoryRequest(repository)
+      const result = await service.request(repository)
+
       const { entityType, paramsType, funcName, method } = getNames(module, repository)
       if (result && isObject(result)) {
         const entityTypeContent = transformType(JSON.stringify(result), entityType)

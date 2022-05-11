@@ -40,7 +40,6 @@ describe('index.test.ts', () => {
       url: 'http://127.0.0.1/article/10',
       method: 'GET'
     })
-    console.log(names, '========')
     // expect(names).toEqual({
     //   method: 'get',
     //   entityType: 'GetUserEntity',

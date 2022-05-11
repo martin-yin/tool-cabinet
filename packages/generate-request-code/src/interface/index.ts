@@ -1,11 +1,6 @@
-import { Method } from 'axios'
+import { AxiosInterceptorManager, AxiosRequestConfig, AxiosResponse } from 'axios'
 
-export interface RepositoryType {
-  url: string
-  method: Method
-  params?: any
-  data?: any
-}
+export type RepositoryType = AxiosRequestConfig
 
 export interface DomainType {
   module: string
@@ -14,5 +9,8 @@ export interface DomainType {
 
 export interface GenerateRequestCodeOptionsType {
   filePath: string
+  requestConfig?: AxiosRequestConfig
+  interceptorRequest?: (config: AxiosRequestConfig<any>) => AxiosInterceptorManager<AxiosRequestConfig>
+  interceptorResponse?: (config: AxiosResponse<any, any>) => any
   domains: DomainType[]
 }

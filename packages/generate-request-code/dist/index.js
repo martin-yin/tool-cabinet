@@ -1,12 +1,12 @@
 'use strict';
 
 var cac = require('cac');
-var fs = require('fs');
 var path = require('path');
 var colors = require('picocolors');
 var _ = require('underscore');
 var axios = require('axios');
 var parse = require('url-parse');
+var fs = require('fs');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e["default"] : e; }
 
@@ -23,12 +23,12 @@ function _interopNamespace(e) {
 }
 
 var cac__default = /*#__PURE__*/_interopDefaultLegacy(cac);
-var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 var path__default = /*#__PURE__*/_interopDefaultLegacy(path);
 var colors__default = /*#__PURE__*/_interopDefaultLegacy(colors);
 var ___namespace = /*#__PURE__*/_interopNamespace(_);
 var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
 var parse__default = /*#__PURE__*/_interopDefaultLegacy(parse);
+var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 
 const entityTemplate = ({ entityTypeContent, abstractClassName, abstractFuncList }) => {
   return `
@@ -79,13 +79,13 @@ const useCaseTemplate = (usecase) => {
   import { inject, injectable } from 'tsyringe'
 
   @injectable()
-  export class ${usecase.classeName} implements UseCase<${usecase.paramsType}, ${usecase.paramsType}> {
+  export class ${usecase.classeName} implements UseCase<${usecase.paramsType === "" ? "void" : usecase.paramsType}, ${usecase.returnType}> {
     constructor(
       @inject('${usecase.abstractClassType}') private ${usecase.abstractClass}: ${usecase.abstractClassType},
       @inject('MessageService') private messageService: MessageService,
     ) {}
-    async execute(${usecase.paramsType === "void" ? "" : "params:" + usecase.paramsType}): Promise<${usecase.paramsType}> {
-      const { data, code, msg } = await this.${usecase.abstractClass}.${usecase.funcName}${usecase.paramsType === "void" ? "" : "(params)"}
+    async execute(${usecase.paramsType === "" ? "" : "params:" + usecase.paramsType}): Promise<${usecase.returnType}> {
+      const { data, code, msg } = await this.${usecase.abstractClass}.${usecase.funcName}${usecase.paramsType === "" ? "()" : "(params)"}
       if (code === 200) {
         return data
       } else {
@@ -236,23 +236,35 @@ function isEmpty(str) {
 function getNames(module, repository) {
   const { method, url } = repository;
   const last = getUrlLast(url);
-  const entityType = `${method}-${module}-entity`;
-  const paramsType = isEmpty(last) ? `${method}-${module}-params` : `${method}-${module}-${last}-params`;
-  const modelName = `${method}-${module}-model`;
   return {
-    method: toLower(method),
-    entityType: toUpperCaseBySymbol(entityType),
-    paramsType: toUpperCaseBySymbol(paramsType),
-    modelName: toUpperCaseBySymbol(modelName),
+    method: getMethod(method),
+    entityType: getEntityType(method, module),
+    paramsType: repository.params || repository.data ? getParamsType(method, module, last) : "",
+    modelName: getModelName(method, module),
     funcName: getFuncName(method, module, last)
   };
+}
+function getModelName(method, module) {
+  const modelName = `${method}-${module}-model`;
+  return toUpperCaseBySymbol(modelName);
+}
+function getEntityType(method, module) {
+  const entityType = `${method}-${module}-entity`;
+  return toUpperCaseBySymbol(entityType);
+}
+function getMethod(method) {
+  return toLower(method);
+}
+function getParamsType(method, module, last) {
+  const paramsType = isEmpty(last) ? `${method}-${module}-by-id-params` : `${method}-${module}-${last}-params`;
+  return toUpperCaseBySymbol(paramsType);
 }
 function getFuncName(method, module, last) {
   let api = "";
   if (last === module) {
     api = firstToUpper(`${module}`);
   } else {
-    const apiName = isEmpty(last) ? module : `${module}-${last}`;
+    const apiName = isEmpty(last) ? `${module}-by-id` : `${module}-${last}`;
     api = toUpperCaseBySymbol(apiName);
   }
   return `${toLower(method)}${api}`;
@@ -266,19 +278,6 @@ function getUrlLast(url) {
 function getPathName(url) {
   const { pathname } = parse__default(url);
   return pathname;
-}
-async function repositoryRequest(config) {
-  try {
-    const result = await axios__default.request(config);
-    if (result.status < 300) {
-      return result.data;
-    }
-    return null;
-  } catch (error) {
-    console.log(colors__default.red(`\u5931\u8D25\u539F\u56E0\uFF1A${error.toString()} 
-`));
-    return null;
-  }
 }
 function transformType(data, typeName) {
   const json2ts = new Json2Ts();
@@ -428,14 +427,14 @@ class SourceCode {
   constructor() {
     this.sourceCodeList = [];
   }
-  async transformSourceCode(modulePath, domain) {
+  async transformSourceCode(service, modulePath, domain) {
     const { module, repositorys } = domain;
     this.entitySourceCode = new EntitySourceCode(modulePath, module);
     this.modelSourceCode = new ModelSourceCode(modulePath, module);
     this.repositorySourceCode = new RepositorySourceCode(modulePath, module);
     this.useCaseSourceCode = new UseCaseSourceCode(modulePath, module);
     for (const repository of repositorys) {
-      const result = await repositoryRequest(repository);
+      const result = await service.request(repository);
       const { entityType, paramsType, funcName, method } = getNames(module, repository);
       if (result && _.isObject(result)) {
         const entityTypeContent = transformType(JSON.stringify(result), entityType);
@@ -466,6 +465,29 @@ class SourceCode {
     this.modelSourceCode.pushModel(repository, paramsType);
     this.repositorySourceCode.pushRepositoryFunc({ method, paramsType, funcName, entityType, repository });
     this.useCaseSourceCode.pushUseCase(funcName, paramsType, entityType);
+  }
+}
+
+class RepositoryRequest {
+  constructor({
+    requestConfig,
+    interceptorRequest = null,
+    interceptorResponse = null
+  }) {
+    this.service = axios__default.create(requestConfig);
+    if (interceptorRequest) {
+      this.service.interceptors.request.use((config) => {
+        return interceptorRequest(config);
+      });
+    }
+    if (interceptorResponse) {
+      this.service.interceptors.response.use((response) => {
+        return interceptorResponse(response);
+      });
+    }
+  }
+  request(config) {
+    return this.service.request(config);
   }
 }
 
@@ -531,17 +553,19 @@ class WriteFile {
 
 class GenerateRequestCode {
   constructor(options) {
-    this.sourceCode = new SourceCode();
+    const { requestConfig, interceptorRequest, interceptorResponse } = options;
     this.options = options;
+    this.service = new RepositoryRequest({ requestConfig, interceptorRequest, interceptorResponse });
   }
   async run() {
     const {
       options: { filePath, domains }
     } = this;
     for (const domain of domains) {
+      this.sourceCode = new SourceCode();
       const { module } = domain;
       const modulePath = `${filePath}/domain/${module}`;
-      const sourceCodeList = await this.sourceCode.transformSourceCode(modulePath, domain);
+      const sourceCodeList = await this.sourceCode.transformSourceCode(this.service, modulePath, domain);
       const result = await WriteFile.writeFiles(sourceCodeList);
       if (result) {
         console.log(colors__default.green(`\u6A21\u5757${module}\u5199\u5165\u5B8C\u6210!
@@ -564,8 +588,7 @@ function start() {
   const { args } = cliInit();
   const configPath = path__default.resolve(rootPath, args[0]);
   try {
-    const configJson = fs__default.readFileSync(configPath, "utf-8");
-    const config = JSON.parse(configJson);
+    const config = require(`${configPath}`);
     if (config.filePath == "") {
       throw new Error("\u914D\u7F6E\u6587\u4EF6\u5730\u5740\u4E0D\u80FD\u4E3A\u7A7A");
     }

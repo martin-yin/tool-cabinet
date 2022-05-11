@@ -1,7 +1,7 @@
 import cac from 'cac'
-import fs from 'fs'
 import path from 'path'
 import { GenerateRequestCode } from './generateRequestCode'
+import { GenerateRequestCodeOptionsType } from './interface'
 const rootPath = process.cwd()
 
 function cliInit() {
@@ -14,8 +14,7 @@ function start() {
   const { args } = cliInit()
   const configPath = path.resolve(rootPath, args[0])
   try {
-    const configJson = fs.readFileSync(configPath, 'utf-8')
-    const config = JSON.parse(configJson)
+    const config: GenerateRequestCodeOptionsType = require(`${configPath}`)
     if (config.filePath == '') {
       throw new Error('配置文件地址不能为空')
     }

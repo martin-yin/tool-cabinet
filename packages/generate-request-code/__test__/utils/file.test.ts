@@ -1,5 +1,5 @@
 import path from 'path'
-import { dotExistDirectoryCreate, generateFile } from '../../src/utils/file'
+import { existDirectoryCreate, generateFile } from '../../src/utils/file'
 import fs from 'fs'
 
 jest.mock('colors', () => ({
@@ -9,14 +9,14 @@ jest.mock('colors', () => ({
 }))
 
 describe('file.test.ts', () => {
-  describe('Test dotExistDirectoryCreate', () => {
+  describe('Test existDirectoryCreate', () => {
     test('empty dir', async () => {
-      const result = await dotExistDirectoryCreate('')
+      const result = await existDirectoryCreate('')
       expect(result).toBe(false)
     })
 
     test('real dir', async () => {
-      const result = await dotExistDirectoryCreate('C:/Users/martin-yin/Desktop')
+      const result = await existDirectoryCreate('C:/Users/martin-yin/Desktop')
       expect(result).toBe(true)
     })
   })
