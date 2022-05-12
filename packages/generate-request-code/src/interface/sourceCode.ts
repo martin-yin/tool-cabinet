@@ -47,7 +47,7 @@ export type UseCaseListType = UseCaseType[]
 export type UseCaseSourceCodeType = Array<SourceCodeType>
 
 export type SourceCodesParams = Record<
-  'entityType' | 'entityTypeContent' | 'module' | 'funcName' | 'paramsType' | 'method',
+  'entityType' | 'entityTypeContent' | 'funcName' | 'paramsType' | 'method',
   string
 > &
   Record<'repository', RepositoryType>

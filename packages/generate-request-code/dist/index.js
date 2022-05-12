@@ -435,16 +435,27 @@ class SourceCode {
     this.useCaseSourceCode = new UseCaseSourceCode(modulePath, module);
     for (const repository of repositorys) {
       const result = await service.request(repository);
-      const { entityType, paramsType, funcName, method } = getNames(module, repository);
       if (result && _.isObject(result)) {
-        const entityTypeContent = transformType(JSON.stringify(result), entityType);
-        this.pushSourceCodes({ entityType, entityTypeContent, module, funcName, paramsType, repository, method });
+        const { entityTypeContent, entityType } = this.getEntity(result, repository.method, module);
+        const { paramsType, funcName, method } = getNames(module, repository);
+        this.pushSourceCodes({ entityType, entityTypeContent, funcName, paramsType, repository, method });
       } else {
         throw Error(`${repository.url} \u8BF7\u6C42\u5931\u8D25 \u6216 \u8BF7\u6C42\u8FD4\u56DE\u7684\u6570\u636E\u4E0D\u662F\u5BF9\u8C61`);
       }
     }
     this.combinationSourceCode();
     return this.sourceCodeList;
+  }
+  getEntity(result, method, module) {
+    let entityTypeContent = "";
+    let entityType = getEntityType(method, module);
+    entityTypeContent += transformType(JSON.stringify(result), entityType);
+    if (Array.isArray(result)) {
+      entityTypeContent += `
+ export type ${entityType}List = ${entityType}[]`;
+      entityType = `${entityType}List`;
+    }
+    return { entityTypeContent, entityType };
   }
   combinationSourceCode() {
     this.sourceCodeList.push(...[
