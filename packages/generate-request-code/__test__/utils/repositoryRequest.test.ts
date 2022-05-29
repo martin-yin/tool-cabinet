@@ -1,8 +1,8 @@
-import { RepositoryRequest } from '../../src/utils/request'
+import { RequestRepository } from 'src/requestRepository'
 
-describe('repositoryRequest.test', () => {
+describe('RequestRepository.test', () => {
   test('requestConfig with empty object ', async () => {
-    const service = new RepositoryRequest({
+    const service = new RequestRepository({
       requestConfig: null
     })
     const result = await service.request({
@@ -12,7 +12,7 @@ describe('repositoryRequest.test', () => {
   })
 
   test('requestAfter with function', async () => {
-    const service = new RepositoryRequest({
+    const service = new RequestRepository({
       requestConfig: {
         baseURL: 'http://127.0.0.1:3000',
         timeout: 60000

@@ -15,7 +15,7 @@ function start() {
   const configPath = path.resolve(rootPath, args[0])
   try {
     const config: GenerateRequestCodeOptionsType = require(`${configPath}`)
-    if (config.filePath == '') {
+    if (config.baseFilePath == '') {
       throw new Error('配置文件地址不能为空')
     }
     const generateRequestCode = new GenerateRequestCode(config)

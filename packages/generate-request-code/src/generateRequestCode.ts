@@ -1,39 +1,60 @@
-import colors from 'picocolors'
-import { GenerateRequestCodeOptionsType } from './interface'
-import { SourceCode } from './sourceCode/sourceCode'
-import { RepositoryRequest } from './utils/request'
-import { WriteFile } from './writeFile'
+import { isObject } from 'underscore'
+import { ContainerRepository } from './containerRepository'
+import { GenerateRequestCodeOptionsType, RepositoryType } from './interface'
+import { ContainerPlugin } from './plugins'
+import { RequestRepository } from './requestRepository'
 
 export class GenerateRequestCode {
-  public options: GenerateRequestCodeOptionsType
-  private sourceCode: SourceCode
-  private service: RepositoryRequest
+  public options: GenerateRequestCodeOptionsType = {
+    baseFilePath: '',
+    domains: [],
+    plugins: []
+  }
+  private service: RequestRepository
+  private containerRepository: ContainerRepository
+  private containerPlugin: ContainerPlugin
 
-  /**
-   *
-   * @param options
-   */
   constructor(options: GenerateRequestCodeOptionsType) {
-    const { requestConfig, interceptorRequest, interceptorResponse } = options
-    this.options = options
-    this.service = new RepositoryRequest({ requestConfig, interceptorRequest, interceptorResponse })
+    const { requestConfig, interceptorRequest, interceptorResponse, baseFilePath, domains, plugins = [] } = options
+    this.options = {
+      domains,
+      baseFilePath
+    }
+    this.containerRepository = new ContainerRepository()
+    this.containerPlugin = new ContainerPlugin(plugins)
+    this.service = new RequestRepository({ requestConfig, interceptorRequest, interceptorResponse })
   }
 
   async run() {
     const {
-      options: { filePath, domains }
+      options: { domains, plugins }
     } = this
     for (const domain of domains) {
-      this.sourceCode = new SourceCode()
-      const { module } = domain
-      const modulePath = `${filePath}/domain/${module}`
-      const sourceCodeList = await this.sourceCode.transformSourceCode(this.service, modulePath, domain)
-      const result = await WriteFile.writeFiles(sourceCodeList)
-      if (result) {
-        console.log(colors.green(`模块${module}写入完成!\n`))
-      } else {
-        throw Error(`模块${module}写入失败!\n`)
+      const { repositorys, module } = domain
+      for (const repository of repositorys) {
+        const result = await this.service.request(repository)
+        this.validateResult(repository, result)
+        repository.result = result
       }
+      this.containerRepository.registerRepository(module, repositorys)
+      this.containerPlugin.usePlugins(module, plugins, this.containerRepository)
+    }
+  }
+
+  private validateResult(repository: RepositoryType, result: any) {
+    if (!isObject(result)) {
+      throw Error(
+        `请求失败，请求url: ${repository.url}, repository: ${JSON.stringify(
+          repository
+        )},错误原因: 请求返回的结果不是对象`
+      )
+    }
+    if (Array.isArray(result)) {
+      throw Error(
+        `请求失败，请求url: ${repository.url}, repository: ${JSON.stringify(
+          repository
+        )},错误原因: 请求返回的结果不是数组`
+      )
     }
   }
 }

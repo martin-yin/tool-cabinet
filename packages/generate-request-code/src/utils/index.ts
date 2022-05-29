@@ -1,11 +1,6 @@
-import axios, { AxiosRequestConfig, Method } from 'axios'
-import colors from 'picocolors'
+import { Method } from 'axios'
 import parse from 'url-parse'
-import { RepositoryType } from '../interface'
-import { entityTemplate } from '../template/entityTemplate'
-import { modelTemplate } from '../template/modelTemplate'
-import { repositoryTemplate } from '../template/repositoryTemplate'
-import { useCaseTemplate } from '../template/useCaseTemplate'
+import { PluginType, RepositoryType } from '../interface'
 import { Json2Ts } from './json2ts'
 
 export function toUpperCaseBySymbol(str: string, symbol = '-') {
@@ -60,7 +55,11 @@ export function getMethod(method: string) {
 }
 
 export function getParamsType(method: string, module: string, last: string) {
-  const paramsType = isEmpty(last) ? `${method}-${module}-by-id-params` : `${method}-${module}-${last}-params`
+  const paramsType = isEmpty(last)
+    ? `${method}-${module}-by-id-params`
+    : module === last
+    ? `${method}-${module}-params`
+    : `${method}-${module}-${last}-params`
   return toUpperCaseBySymbol(paramsType)
 }
 
@@ -77,8 +76,7 @@ export function getFuncName(method: Method, module: string, last: string) {
 
 export function getUrlLast(url: string) {
   const { pathname } = parse(url)
-  const pathnameArr = pathname.split('/')
-  const last = pathnameArr[pathnameArr.length - 1]
+  const last = pathname.split('/').pop()
   return isNaN(parseInt(last)) ? last : ''
 }
 
@@ -87,38 +85,7 @@ export function getPathName(url: string) {
   return pathname
 }
 
-export async function repositoryRequest(config: AxiosRequestConfig): Promise<any> {
-  try {
-    const result = await axios.request(config)
-    if (result.status < 300) {
-      return result.data
-    }
-    return null
-  } catch (error) {
-    console.log(colors.red(`失败原因：${error.toString()} \n`))
-    return null
-  }
-}
-
-export function transformType(data: string, typeName: string) {
+export function convertType(data: string, typeName: string) {
   const json2ts = new Json2Ts()
   return json2ts.convert(data, typeName)
 }
-
-const template = {
-  entity: entityTemplate,
-  model: modelTemplate,
-  repository: repositoryTemplate,
-  useCase: useCaseTemplate
-}
-
-export const getTemplate = new Proxy(template, {
-  get(target, phrase: string) {
-    if (phrase in target) {
-      return Reflect.get(target, phrase)
-    } else {
-      console.log(colors.red(`没有查询到${phrase}Template 模板\n`))
-      return null
-    }
-  }
-})

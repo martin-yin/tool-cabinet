@@ -1,18 +1,5 @@
-import {
-  getFuncName,
-  getUrlLast,
-  repositoryRequest,
-  toUpperCaseBySymbol,
-  getNames,
-  transformType,
-  getTemplate
-} from '../../src/utils'
-
-// jest.mock('colors', () => ({
-//   green: jest.fn(),
-//   blue: jest.fn(),
-//   red: jest.fn()
-// }))
+import { getTemplate } from 'src/utils/template'
+import { getFuncName, getNames, getUrlLast, toUpperCaseBySymbol, convertType } from '../../src/utils'
 
 describe('index.test.ts', () => {
   const url = 'https://www.fastmock.site/mock/41fa03b4c7422029e00ec4ee0c8063d2/eno-component/api/video'
@@ -35,20 +22,6 @@ describe('index.test.ts', () => {
     })
   })
 
-  test('Test getNames by url number', () => {
-    const names = getNames('user', {
-      url: 'http://127.0.0.1/article/10',
-      method: 'GET'
-    })
-    // expect(names).toEqual({
-    //   method: 'get',
-    //   entityType: 'GetUserEntity',
-    //   paramsType: 'GetUserVideoParams',
-    //   modelName: 'GetUserModel',
-    //   funcName: 'getUserVideo'
-    // })
-  })
-
   test('Test getFuncName', () => {
     const funcName = getFuncName('GET', 'Admin', 'video')
     expect(funcName).toBe('getAdminVideo')
@@ -57,34 +30,6 @@ describe('index.test.ts', () => {
   test('Test getUrlLast', () => {
     const last = getUrlLast(url)
     expect(last).toBe('video')
-  })
-
-  describe('Test repositoryRequest', () => {
-    test('not found request url', async () => {
-      const result = await repositoryRequest({
-        url: 'http://www.bccc.cccco',
-        method: 'GET'
-      })
-      expect(result).toBeNull()
-    })
-    test('connect fail', async () => {
-      const result = await repositoryRequest({
-        url: 'http://127.0.0.1:8889/admin/adminLogin',
-        method: 'POST'
-      })
-      expect(result).toBeNull()
-    })
-
-    test('request success', async () => {
-      const result = await repositoryRequest({
-        url: 'https://www.fastmock.site/mock/41fa03b4c7422029e00ec4ee0c8063d2/eno-component/api/video',
-        method: 'GET',
-        params: {
-          page: 2
-        }
-      })
-      expect(result.category).toEqual(['全部', '其他', '软文推广', '订单相关', '数据上报相关', '商品相关'])
-    })
   })
 
   test('Test transformType', () => {
@@ -100,7 +45,7 @@ describe('index.test.ts', () => {
       total: 30,
       page: 2
     }
-    const result = transformType(JSON.stringify(data), 'VideoEntity')
+    const result = convertType(JSON.stringify(data), 'VideoEntity')
     expect(result).toEqual(
       `export interface List {\n\tfileName: string;\n\tpreviewUrl: string;\n\tfilePath: string;\n\tdomain: string;\n\tid: string;\n}\n\nexport interface VideoEntity {\n\tlist: List;\n\tcategory: string[];\n\ttotal: number;\n\tpage: number;\n}`
     )

@@ -269,7 +269,7 @@ class AutoInjiect {
 }
 
 new AutoInjiect({
-  ignoreAbstractList: ['UseCase'],
+  ignoreAbstractList: [],
   mainPath: './src/main.tsx',
   sourceListPath: ['./src/domain/**/*.ts', './src/infrastructure/**/*.ts']
 }).start()
