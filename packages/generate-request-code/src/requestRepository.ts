@@ -1,5 +1,5 @@
 import axios, { Axios, AxiosRequestConfig } from 'axios'
-import { GenerateRequestCodeOptionsType } from 'src/interface'
+import { OptionsType } from 'src/interface'
 
 export class RequestRepository {
   public service: Axios
@@ -7,7 +7,7 @@ export class RequestRepository {
     requestConfig,
     interceptorRequest = null,
     interceptorResponse = null
-  }: Omit<GenerateRequestCodeOptionsType, 'baseFilePath' | 'domains'>) {
+  }: Omit<OptionsType, 'baseFilePath' | 'domains'>) {
     this.service = axios.create(requestConfig)
     if (interceptorRequest) {
       this.service.interceptors.request.use(config => {

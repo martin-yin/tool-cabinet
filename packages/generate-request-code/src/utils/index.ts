@@ -1,6 +1,6 @@
 import { Method } from 'axios'
 import parse from 'url-parse'
-import { PluginType, RepositoryType } from '../interface'
+import { RepositoryType } from '../interface'
 import { Json2Ts } from './json2ts'
 
 export function toUpperCaseBySymbol(str: string, symbol = '-') {

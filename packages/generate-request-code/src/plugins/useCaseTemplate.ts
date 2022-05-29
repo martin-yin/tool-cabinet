@@ -1,11 +1,12 @@
+import { ContainerRepository } from 'src/containerRepository'
 import { PluginType } from 'src/interface'
 import { firstToLower, firstToUpper } from 'src/utils'
 
 export const useCaseTemplate: PluginType = {
   type: 'template',
   name: 'usecase',
-  transform: (module, containerRepository) => {
-    const repositorys = containerRepository.getRepository(module)
+  transform: module => {
+    const repositorys = ContainerRepository.getRepository(module)
     const useCaseList = []
     repositorys.map(repository => {
       const { funcName, paramsType, returnType } = repository.templateData

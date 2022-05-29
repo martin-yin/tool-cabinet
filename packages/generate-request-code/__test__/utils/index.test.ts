@@ -1,4 +1,4 @@
-import { getTemplate } from 'src/utils/template'
+import { getTemplateByKey } from 'src/utils/template'
 import { getFuncName, getNames, getUrlLast, toUpperCaseBySymbol, convertType } from '../../src/utils'
 
 describe('index.test.ts', () => {
@@ -51,9 +51,9 @@ describe('index.test.ts', () => {
     )
   })
 
-  describe('Test getTemplate', () => {
+  describe('Test getTemplateByKey', () => {
     test('not found template', () => {
-      const template = getTemplate['not']
+      const template = getTemplateByKey['not']
       expect(template).toBeNull()
     })
   })

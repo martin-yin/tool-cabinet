@@ -11,7 +11,7 @@ const template = {
   useCase: useCaseTemplate
 }
 
-export const getTemplate = new Proxy(template, {
+export const getTemplateByKey = new Proxy(template, {
   get(target, phrase: string) {
     if (phrase in target) {
       return Reflect.get(target, phrase)

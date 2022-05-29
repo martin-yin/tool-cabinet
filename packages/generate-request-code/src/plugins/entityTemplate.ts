@@ -1,3 +1,4 @@
+import { ContainerRepository } from 'src/containerRepository'
 import { PluginType } from 'src/interface'
 import { convertType, firstToUpper, getEntityType, getNames } from 'src/utils'
 
@@ -15,8 +16,8 @@ function getEntity(module: string, method: string, result: any) {
 export const entityTemplate: PluginType = {
   type: 'template',
   name: 'entity',
-  transform: (module, containerRepository) => {
-    const repositorys = containerRepository.getRepository(module)
+  transform: module => {
+    const repositorys = ContainerRepository.getRepository(module)
     const entityTypeContentList = []
     const funcList = []
 
@@ -35,7 +36,7 @@ export const entityTemplate: PluginType = {
         returnType: entityType
       }
     })
-    containerRepository.registerRepository(module, repositorys)
+    ContainerRepository.registerRepository(module, repositorys)
     return {
       fileName: `${module}Entity.ts`,
       className: `${firstToUpper(module)}Repository`,

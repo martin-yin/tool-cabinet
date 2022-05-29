@@ -1,8 +1,8 @@
 import { GenerateRequestCode } from 'src/generateRequestCode'
-import { GenerateRequestCodeOptionsType } from 'src/interface'
+import { OptionsType } from 'src/interface'
 
 describe('generateRequestCode.ts', () => {
-  const defaultOption: GenerateRequestCodeOptionsType = {
+  const defaultOption: OptionsType = {
     requestConfig: {
       baseURL: 'http://192.168.31.116:3000'
     },
@@ -35,10 +35,6 @@ describe('generateRequestCode.ts', () => {
       }
     ]
   }
-  test('test default template', () => {
-    const generateRequestCode = new GenerateRequestCode(defaultOption)
-    expect(generateRequestCode.options.plugins.length).toBe(4)
-  })
 
   test('test generate code', async () => {
     const generateRequestCode = new GenerateRequestCode(defaultOption)

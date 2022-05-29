@@ -1,11 +1,12 @@
+import { ContainerRepository } from 'src/containerRepository'
 import { PluginType } from 'src/interface'
 import { firstToUpper, getPathName } from 'src/utils'
 
 export const repositoryTemplate: PluginType = {
   type: 'template',
   name: 'repository',
-  transform: (module, containerRepository) => {
-    const repositorys = containerRepository.getRepository(module)
+  transform: module => {
+    const repositorys = ContainerRepository.getRepository(module)
     const funcList = []
 
     repositorys.map(repository => {

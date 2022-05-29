@@ -1,3 +1,4 @@
+import { ContainerRepository } from 'src/containerRepository'
 import { PluginType, RepositoryType } from 'src/interface'
 import { convertType } from 'src/utils'
 
@@ -16,9 +17,9 @@ function covertModelContent(repository: RepositoryType, paramsType: string) {
 export const modelTemplate: PluginType = {
   type: 'template',
   name: 'model',
-  transform: (module, containerRepository) => {
+  transform: module => {
     const modelTypeContent = []
-    const repositorys = containerRepository.getRepository(module)
+    const repositorys = ContainerRepository.getRepository(module)
 
     repositorys.map(repository => {
       modelTypeContent.push(covertModelContent(repository, repository.templateData.paramsType))

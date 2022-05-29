@@ -24,8 +24,10 @@ export function generateFile(directory: string, file: string, data: string) {
     try {
       fs.writeFileSync(`${directory}/${file}`, data, 'utf8')
       console.log(colors.green(`创建创建文件成功: ${file} \n`))
+      return true
     } catch (error) {
       console.log(colors.red(`创建文件失败 ${directory}${file}, ${error.message} \n`))
+      return false
     }
   }
 }
