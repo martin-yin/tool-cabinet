@@ -1,4 +1,5 @@
 import { ClassDeclaration, ImportDeclaration, Project, SourceFile, SyntaxKind } from 'ts-morph'
+import { AbstractUtils } from './utils/abstract.utils'
 
 /**
  *
@@ -7,18 +8,6 @@ import { ClassDeclaration, ImportDeclaration, Project, SourceFile, SyntaxKind } 
  */
 function spaceReplace(value: string): string {
   return value.replace(/\s*/g, '')
-}
-
-function isAbstract(classes: ClassDeclaration) {
-  return classes.isAbstract()
-}
-
-function getAbstractNames(classe: ClassDeclaration) {
-  return classe.getName()
-}
-
-function getAbstractClass(sourceFile: SourceFile, abstractName: string) {
-  return sourceFile.getClass(abstractName)
 }
 
 type IgnoreAbstractListType = string[]
@@ -79,8 +68,8 @@ class AutoInjiect {
       const classList = sourceFile.getClasses()
       for (const classe of classList) {
         // 判断这个class是否是抽象类
-        if (isAbstract(classe) && classe.isExported()) {
-          const abstractName = getAbstractNames(classe)
+        if (AbstractUtils.isAbstract(classe) && classe.isExported()) {
+          const abstractName = AbstractUtils.getAbstractNames(classe)
           if (!this.ignoreAbstractList.includes(abstractName)) {
             //如果是在同一个文件里声明了抽象类，并且继承了。
             const implementsInFile = this.isImplementsInFile(classList, abstractName)
@@ -89,7 +78,7 @@ class AutoInjiect {
               this.addReferenceAbstract(abstractName, abstractName, abstractName)
               this.referenceSourceFileList.push(classSourceFile)
             } else {
-              const abstractClass = getAbstractClass(sourceFile, abstractName)
+              const abstractClass = AbstractUtils.getAbstractClass(sourceFile, abstractName)
               const referencesourceFile = this.getReferenceSourceFile(abstractClass, abstractName)
               if (referencesourceFile) {
                 const { abstractName, importAbstractName, exportAbstractName, referenceSourceFile } =

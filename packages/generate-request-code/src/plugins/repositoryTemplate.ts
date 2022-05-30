@@ -1,12 +1,11 @@
-import { ContainerRepository } from 'src/containerRepository'
-import { PluginType } from 'src/interface'
-import { firstToUpper, getPathName } from 'src/utils'
+import { PluginType } from '../interface'
+import { firstToUpper, getPathName } from '../utils'
 
 export const repositoryTemplate: PluginType = {
   type: 'template',
   name: 'repository',
-  transform: module => {
-    const repositorys = ContainerRepository.getRepository(module)
+  transform: (module, containerRepository) => {
+    const repositorys = containerRepository.getRepository(module)
     const funcList = []
 
     repositorys.map(repository => {
@@ -19,14 +18,16 @@ export const repositoryTemplate: PluginType = {
       })
     })
     return {
+      directory: `/domain/${module}/repository/`,
       fileName: `${module}Repository.ts`,
       className: `${firstToUpper(module)}WebRepository`,
       abstractClassName: `${firstToUpper(module)}Repository`,
       funcList
     }
   },
-  template: ({ fileName, className, abstractClassName, funcList }) => {
+  template: ({ directory, fileName, className, abstractClassName, funcList }) => {
     return {
+      directory,
       fileName,
       content: `
         import { HttpService } from '@/infrastructure/interface/http'

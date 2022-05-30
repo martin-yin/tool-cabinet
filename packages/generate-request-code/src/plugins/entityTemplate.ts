@@ -1,6 +1,5 @@
-import { ContainerRepository } from 'src/containerRepository'
-import { PluginType } from 'src/interface'
-import { convertType, firstToUpper, getEntityType, getNames } from 'src/utils'
+import { PluginType } from '../interface'
+import { convertType, firstToUpper, getEntityType, getNames } from '../utils'
 
 function getEntity(module: string, method: string, result: any) {
   let entityTypeContent = ''
@@ -16,8 +15,8 @@ function getEntity(module: string, method: string, result: any) {
 export const entityTemplate: PluginType = {
   type: 'template',
   name: 'entity',
-  transform: module => {
-    const repositorys = ContainerRepository.getRepository(module)
+  transform: (module, containerRepository) => {
+    const repositorys = containerRepository.getRepository(module)
     const entityTypeContentList = []
     const funcList = []
 
@@ -36,16 +35,18 @@ export const entityTemplate: PluginType = {
         returnType: entityType
       }
     })
-    ContainerRepository.registerRepository(module, repositorys)
+    containerRepository.registerRepository(module, repositorys)
     return {
+      directory: `/domain/${module}/model/`,
       fileName: `${module}Entity.ts`,
       className: `${firstToUpper(module)}Repository`,
       funcList: funcList,
       entityTypeContent: entityTypeContentList
     }
   },
-  template: ({ fileName, className, funcList, entityTypeContent }) => {
+  template: ({ directory, fileName, className, funcList, entityTypeContent }) => {
     return {
+      directory,
       fileName,
       content: `
           import { IResponse } from '@/infrastructure/lib/request'

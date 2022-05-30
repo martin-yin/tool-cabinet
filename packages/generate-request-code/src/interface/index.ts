@@ -1,4 +1,5 @@
 import { AxiosInterceptorManager, AxiosRequestConfig, AxiosResponse } from 'axios'
+import { ContainerRepository } from '../containerRepository'
 
 export type RepositoryType = AxiosRequestConfig & {
   result?: any
@@ -11,13 +12,15 @@ export type DomainType = {
 }
 
 export type TemplaetType = {
+  directory: string
   fileName: string
   content: string
 }
+
 export type PluginType = {
   type: 'template'
   name: 'entity' | 'usecase' | 'model' | 'repository'
-  transform: (module: string) => any
+  transform: (module: string, containerRepository: ContainerRepository) => any
   template: (data: any) => TemplaetType
 }
 

@@ -1,0 +1,11 @@
+{
+    "extends": "./tsconfig.json",
+    "include": ["src"],
+    "compilerOptions": {
+      "emitDeclarationOnly": true,
+      "declaration": true,
+      "declarationMap": false,
+      "declarationDir": "./types",
+    },
+    "exclude":["__test__/**/*.ts"]
+  }

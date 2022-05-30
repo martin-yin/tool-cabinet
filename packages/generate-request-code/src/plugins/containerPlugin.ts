@@ -1,28 +1,25 @@
-import { OptionsType, PluginType, TemplaetType } from 'src/interface'
-import { getTemplateByKey } from 'src/utils/template'
+import { ContainerRepository } from '../containerRepository'
+import { OptionsType, PluginType, TemplaetType } from '../interface'
+import { getTemplateByKey } from '../utils/template'
 
 const defaultTemplatePluginsKey = ['entity', 'model', 'repository', 'useCase']
 
 export class ContainerPlugin {
-  public templatePlugins = []
+  public templatePlugins: PluginType[] = []
   constructor(plugins: OptionsType['plugins']) {
     this.templatePlugins = this.mergeTemplatePlugins(plugins)
   }
-
-  public useTemplatePlugins(module: string): TemplaetType[] {
-    let templateList: TemplaetType[] = []
-    this.templatePlugins.map(plugin => {
-      const { transform, template } = plugin
-      const result = transform(module)
-      if (Array.isArray(result)) {
-        result.map(usecase => {
-          templateList.push(template(usecase))
-        })
-      } else {
-        templateList.push(template(result))
-      }
+  private sortPlugins(plugins: PluginType[], templateOrder: Array<string>) {
+    plugins.sort(a => {
+      return templateOrder.indexOf(a.type) - templateOrder.indexOf(a.type)
     })
-    return templateList
+    return plugins
+  }
+
+  private differencePlugins(keysOne: Array<string>, keysTwo: Array<string>): Array<string> {
+    return Array.from(
+      new Set(keysOne.concat(keysTwo).filter(v => !new Set(keysOne).has(v) || !new Set(keysTwo).has(v)))
+    )
   }
 
   private mergeTemplatePlugins(plugins = []) {
@@ -44,16 +41,19 @@ export class ContainerPlugin {
     return plugins
   }
 
-  private sortPlugins(plugins: PluginType[], templateOrder: Array<string>) {
-    plugins.sort(a => {
-      return templateOrder.indexOf(a.type) - templateOrder.indexOf(a.type)
+  public useTemplatePlugins(module: string, containerRepository: ContainerRepository): TemplaetType[] {
+    let templateList: TemplaetType[] = []
+    this.templatePlugins.map(plugin => {
+      const { transform, template } = plugin
+      const result = transform(module, containerRepository)
+      if (Array.isArray(result)) {
+        result.map(usecase => {
+          templateList.push(template(usecase))
+        })
+      } else {
+        templateList.push(template(result))
+      }
     })
-    return plugins
-  }
-
-  private differencePlugins(keysOne: Array<string>, keysTwo: Array<string>): Array<string> {
-    return Array.from(
-      new Set(keysOne.concat(keysTwo).filter(v => !new Set(keysOne).has(v) || !new Set(keysTwo).has(v)))
-    )
+    return templateList
   }
 }

@@ -1,3 +1,4 @@
+import { loadConfigFromFile } from 'src/config'
 import { GenerateRequestCode } from 'src/generateRequestCode'
 import { OptionsType } from 'src/interface'
 
@@ -38,6 +39,12 @@ describe('generateRequestCode.ts', () => {
 
   test('test generate code', async () => {
     const generateRequestCode = new GenerateRequestCode(defaultOption)
+    await generateRequestCode.run()
+  })
+
+  test('test generate code by ts config', async () => {
+    const options = await loadConfigFromFile()
+    const generateRequestCode = new GenerateRequestCode(options)
     await generateRequestCode.run()
   })
 })

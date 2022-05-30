@@ -1,8 +1,8 @@
 import colors from 'picocolors'
-import { entityTemplate } from 'src/plugins/entityTemplate'
-import { modelTemplate } from 'src/plugins/modelTemplate'
-import { repositoryTemplate } from 'src/plugins/repositoryTemplate'
-import { useCaseTemplate } from 'src/plugins/useCaseTemplate'
+import { entityTemplate } from '../plugins/entityTemplate'
+import { modelTemplate } from '../plugins/modelTemplate'
+import { repositoryTemplate } from '../plugins/repositoryTemplate'
+import { useCaseTemplate } from '../plugins/useCaseTemplate'
 
 const template = {
   entity: entityTemplate,

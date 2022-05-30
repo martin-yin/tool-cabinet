@@ -1,7 +1,7 @@
 import cac from 'cac'
 import path from 'path'
+import { loadConfigFromFile } from './config'
 import { GenerateRequestCode } from './generateRequestCode'
-import { OptionsType } from './interface'
 const rootPath = process.cwd()
 
 function cliInit() {
@@ -10,18 +10,11 @@ function cliInit() {
   return cli.parse()
 }
 
-function start() {
+async function start() {
   const { args } = cliInit()
-  const configPath = path.resolve(rootPath, args[0])
-  try {
-    const config: OptionsType = require(`${configPath}`)
-    if (config.baseFilePath == '') {
-      throw new Error('配置文件地址不能为空')
-    }
-    const generateRequestCode = new GenerateRequestCode(config)
-    generateRequestCode.run()
-  } catch (error) {
-    throw new Error(`读取配置文件错误: ${error.message}`)
-  }
+  const configFile = path.resolve(rootPath, args[0])
+  const config = await loadConfigFromFile(configFile)
+  const generateRequestCode = new GenerateRequestCode(config)
+  generateRequestCode.run()
 }
 start()

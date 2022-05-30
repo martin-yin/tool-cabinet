@@ -39,7 +39,6 @@ function createConfig(isProduction) {
     ...defaultConfig,
     external: [...defaultConfig.external, ...(isProduction ? [] : Object.keys({ ...packageJSON.devDependencies }))]
   }
-
   return config
 }
 

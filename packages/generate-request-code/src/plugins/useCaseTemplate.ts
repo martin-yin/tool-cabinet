@@ -1,17 +1,17 @@
-import { ContainerRepository } from 'src/containerRepository'
-import { PluginType } from 'src/interface'
-import { firstToLower, firstToUpper } from 'src/utils'
+import { PluginType } from '../interface'
+import { firstToLower, firstToUpper } from '../utils'
 
 export const useCaseTemplate: PluginType = {
   type: 'template',
   name: 'usecase',
-  transform: module => {
-    const repositorys = ContainerRepository.getRepository(module)
+  transform: (module, containerRepository) => {
+    const repositorys = containerRepository.getRepository(module)
     const useCaseList = []
     repositorys.map(repository => {
       const { funcName, paramsType, returnType } = repository.templateData
       const classeName = firstToUpper(funcName) + 'Usecase'
       useCaseList.push({
+        directory: `/domain/${module}/application/`,
         fileName: `${firstToLower(classeName)}.ts`,
         classeName,
         paramsType,
@@ -24,8 +24,18 @@ export const useCaseTemplate: PluginType = {
 
     return useCaseList
   },
-  template: ({ fileName, classeName, abstractClass, paramsType, returnType, funcName, abstractClassType }) => {
+  template: ({
+    directory,
+    fileName,
+    classeName,
+    abstractClass,
+    paramsType,
+    returnType,
+    funcName,
+    abstractClassType
+  }) => {
     return {
+      directory,
       fileName: fileName,
       content: `
         import { MessageService } from '@/infrastructure/interface/message'

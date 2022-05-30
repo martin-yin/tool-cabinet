@@ -5,7 +5,7 @@
 ## 使用
 
 ```typescript
-npx generate-request-code ./config.js
+npx generate-request-code ./generate-request-code.config.ts
 ```
 
 传递配置`js`地址即可
@@ -13,13 +13,17 @@ npx generate-request-code ./config.js
 ## 配置文件格式
 
 ```typescript
-module.exports = {
+// generate-request-code.config.ts
+
+import { defineConfig } from './src/config'
+import { entityTemplate } from './src/plugins/entityTemplate'
+import { modelTemplate } from './src/plugins/modelTemplate'
+
+export default {
   requestConfig: {
-    // axios config 配置
     baseURL: 'http://192.168.31.116:3000'
   },
-  // axios 拦截器
-  interceptorRequest: config => {},
+  interceptorRequest: null,
   interceptorResponse: response => {
     const responseCode = response.status
     if (responseCode < 300) {
@@ -28,31 +32,30 @@ module.exports = {
       return Promise.reject(response)
     }
   },
-  filePath: 'D:/knowledge-base/packages/webapp/src', // 写入代码地址
+  baseFilePath: 'D:/knowledge-base/packages/webapp/src/',
+  plugins: [entityTemplate, modelTemplate], // 默认是4个模板，在根据传递进来的模板判断差集
   domains: [
     {
       module: 'article',
       repositorys: [
-        // AxiosRequestConfig
         {
           url: '/article',
           method: 'GET',
           params: {
-            title: '文章',
-            keywords: '关键字',
-            category: '分类'
+            title: '',
+            keywords: '',
+            category: '',
+            pageIndex: 1,
+            pageSize: 15
           }
         }
       ]
     }
   ]
 }
+
+// 使用 `defineConfig`,可以对类型做提示。
+export default defineConfig({
+  ....
+})
 ```
-
-## Todo
-
-1. 自定义模板功能
-
-2. 根据传递参数，选择性生成文件。
-
-3. 根据传递参数覆盖文件

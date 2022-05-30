@@ -21,6 +21,6 @@
     "target": "ES2019",
     "lib": ["ESNext"],
   },
-  "include": ["src/**/*.ts", "__test__/**/*.ts", "src/cli.js"],
+  "include": ["src/**/*.ts", "__test__/**/*.ts", "src/cli.js", "index.ts"],
   "exclude": ["./dist"]
 }
