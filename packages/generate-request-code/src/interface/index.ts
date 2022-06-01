@@ -6,17 +6,27 @@ export type RepositoryType = AxiosRequestConfig & {
   [x: string]: any
 }
 
+/**
+ * @readonly
+ */
 export type DomainType = {
   module: string
   repositorys: RepositoryType[]
 }
 
+/**
+ * @readonly
+ */
 export type TemplaetType = {
   directory: string
   fileName: string
   content: string
 }
 
+/**
+ * 自定义插件时使用此类型
+ * @public
+ */
 export type PluginType = {
   type: 'template'
   name: 'entity' | 'usecase' | 'model' | 'repository'
@@ -24,6 +34,9 @@ export type PluginType = {
   template: (data: any) => TemplaetType
 }
 
+/**
+ * @public
+ */
 export type OptionsType = {
   baseFilePath: string
   requestConfig?: AxiosRequestConfig

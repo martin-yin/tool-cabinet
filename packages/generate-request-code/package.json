@@ -3,13 +3,16 @@
   "version": "0.0.3",
   "private": false,
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && rollup -c rollup.config.js",
-    "dev": "tsc -p tsconfig.build.json && rollup -w -c rollup.config.js",
+    "dev": "rollup -w -c rollup.config.js",
+    "build": "rollup -c rollup.config.js && build-types",
+    "build-types": "run-s build-temp-types roll-types",
+    "build-temp-types": "tsc -p tsconfig.build.json",
+    "roll-types": "api-extractor run && rimraf types",
     "test": "jest"
   },
   "main": "./dist/index.js",
-  "module": "./es/index.js",
-  "types": "./types/index.d.ts",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "bin": {
     "generate-request-code": "bin/index.js"
   },
@@ -30,6 +33,7 @@
     "axios": "^0.26.1",
     "cac": "^6.7.12",
     "picocolors": "^1.0.0",
+    "typedoc": "^0.22.17",
     "underscore": "^1.13.2",
     "url": "^0.11.0",
     "url-parse": "^1.5.10"

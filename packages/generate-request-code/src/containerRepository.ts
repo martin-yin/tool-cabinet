@@ -1,4 +1,4 @@
-import { RepositoryType } from './interface'
+import type { RepositoryType } from './interface'
 
 export class ContainerRepository {
   public readonly containerMap = new Map<string, RepositoryType[]>()

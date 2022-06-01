@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "noImplicitAny": false,
-    "removeComments": true,
+    "removeComments": false,
     "preserveConstEnums": true,
     "outDir": "dist",
     "sourceMap": false,

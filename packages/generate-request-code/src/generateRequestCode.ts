@@ -2,7 +2,7 @@ import colors from 'picocolors'
 import { isObject } from 'underscore'
 import { ContainerRepository } from './containerRepository'
 
-import { OptionsType, RepositoryType } from './interface'
+import type { OptionsType, RepositoryType } from './interface'
 import { ContainerPlugin } from './plugins/containerPlugin'
 import { RequestRepository } from './requestRepository'
 import { FileUtil } from './utils/file.utils'

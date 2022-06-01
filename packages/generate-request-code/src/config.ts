@@ -2,7 +2,7 @@ import { build } from 'esbuild'
 import fs from 'fs'
 import path from 'path'
 import { pathToFileURL } from 'url'
-import { OptionsType } from './interface'
+import type { OptionsType } from './interface'
 
 export async function bundleConfigFile(
   fileName: string,
@@ -56,6 +56,10 @@ export async function bundleConfigFile(
   }
 }
 
+/**
+ *
+ * @public
+ */
 export function defineConfig(config: OptionsType): OptionsType {
   return config
 }

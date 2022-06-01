@@ -1,5 +1,5 @@
 import axios, { Axios, AxiosRequestConfig } from 'axios'
-import { OptionsType } from 'src/interface'
+import type { OptionsType } from './interface'
 
 export class RequestRepository {
   public service: Axios

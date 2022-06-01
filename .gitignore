@@ -26,4 +26,6 @@ yarn-error.log*
 
 /code-generate/src/domain
 
-/packages/code-generate/dist
+/packages/generate-request-code/dist
+
+/packages/generate-request-code/types
