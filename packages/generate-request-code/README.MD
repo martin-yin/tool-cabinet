@@ -5,7 +5,7 @@
 ## 使用
 
 ```typescript
-npx generate-request-code ./generate-request-code.config.ts
+npx generate-request-code generate generate-request-code.config.ts
 ```
 
 传递配置`js`地址即可
