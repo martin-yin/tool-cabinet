@@ -106,3 +106,27 @@ export async function loadConfigFromFile(configFile?: string, configRoot: string
     return null
   }
 }
+
+function elementType(ele) {
+  const typeStr = Object.prototype.toString.call(ele)
+  const reg = /^\[object\s([A-Za-z]+)\]$/
+  reg.test(typeStr)
+  return RegExp.$1.toLowerCase()
+}
+const jsonStr = `
+{
+  "date": "2021-08-28",
+  "season": "ordinary",
+  "season_week": 21,
+  "celebrations": [
+    {
+      "title": "Saint Augustine of Hippo, bishop and doctor of the Church",
+      "colour": "white",
+      "rank": "memorial",
+      "rank_num": 3.1
+    }
+  ],
+  "weekday": "saturday"
+}
+`
+elementType(jsonStr)

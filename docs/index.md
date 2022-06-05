@@ -20,6 +20,6 @@ sidebarDepth: 2
 
 正如其名, 需要配合 `tsyringe`使用
 
-`tsyringe` 管理注入非常麻烦，甚至会出现写错的情况。通过 `tsyringe-auto-inject` 在分析 AST 树之后解析出各模块之间的对应关系，最总写入顶部文件中，实现"自动注入"。
+`tsyringe` 管理注入非常麻烦，甚至会出现写错的情况。通过 `tsyringe-auto-inject` 在分析 AST 树之后解析出各模块之间的对应关系, 最终写入文件中，实现"自动注入"。
 
 [tsyringe-auto-inject](https://github.com/martin-yin/web-dev-tools/tree/main/packages/tsyringe-auto-inject)
