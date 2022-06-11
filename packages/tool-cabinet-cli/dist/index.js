@@ -33,7 +33,7 @@ var ___namespace = /*#__PURE__*/_interopNamespace(_);
 var parse__default = /*#__PURE__*/_interopDefaultLegacy(parse);
 var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
 
-var version = "0.0.1";
+var version = "0.0.2";
 
 async function loadTsyringeInjectConfig(configFile) {
   const config = await loadConfigFromFile("tsyringe-inject-code", configFile);

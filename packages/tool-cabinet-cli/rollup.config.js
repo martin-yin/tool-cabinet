@@ -45,6 +45,5 @@ function createConfig(isProduction) {
 export default commandLineArgs => {
   const isDev = commandLineArgs.watch
   const isProduction = !isDev
-
   return [createConfig(isProduction)]
 }
