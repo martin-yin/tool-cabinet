@@ -39,4 +39,4 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.DEPLOY_KEY }}
           BRANCH: gh-pages
           FOLDER: docs/.vitepress/dist
-          REPOSITORY_NAME: martin-yin.github.io/web-dev-tools
+          REPOSITORY_NAME: martin-yin.github.io/tool-cabinet

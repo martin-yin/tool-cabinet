@@ -18,15 +18,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/martin-yin/web-dev-tools.git"
+    "url": "git+https://github.com/martin-yin/tool-cabinet.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "martin-yin",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/martin-yin/web-dev-tools/issues"
+    "url": "https://github.com/martin-yin/tool-cabinet/issues"
   },
-  "homepage": "https://github.com/martin-yin/web-dev-tools#readme",
+  "homepage": "https://github.com/martin-yin/tool-cabinet#readme",
   "devDependencies": {
     "@commitlint/cli": "^16.2.3",
     "@commitlint/config-conventional": "^16.2.1",
@@ -41,7 +41,7 @@
     "lerna": "^4.0.0",
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.2",
-    "typescript": "^4.6.3"
+    "typescript": "^4.1.0"
   },
   "lint-staged": {
     "packages/**/*.{ts,js,tsx}": [
