@@ -3,13 +3,14 @@
 
 工作时沉淀的一些工具。
 
-
 ## tool-cabinet-cli 
 
-## 使用
+### 使用
 
 ```typescript
-$ npx tool-cabinet-cli --help
+$ pnpm add @martin-yin/tool-cabinet-cli -g
+
+$ tool-cabinet-cli --help
 
 tool-cabinet-cli/0.0.1
 
@@ -32,7 +33,7 @@ Options:
 ```
 
 
-## tool-cabinet-cli generate-request-code
+#### tool-cabinet-cli generate-request-code 
 
 可自动创建整洁架构所需要的 domain 文件。
 
@@ -87,7 +88,7 @@ export default defineGenerateRepositoryCodeConfig({
 ```
 
 
-## tool-cabinet-cli tsyringe-inject
+#### tool-cabinet-cli tsyringe-inject
 
 正如其名, 需要配合 tsyringe使用
 

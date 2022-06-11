@@ -1,11 +1,11 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  title: 'Web Dev Tools',
+  title: 'tool-cabinet',
   lastUpdated: true,
-  base: '/web-dev-tools/',
+  base: '/tool-cabinet/',
   themeConfig: {
-    repo: 'martin-yin/web-dev-tools',
+    repo: 'martin-yin/tool-cabinet',
     docsDir: 'docs',
     docsBranch: 'main',
     lastUpdated: ' 最后一次更新',
@@ -20,7 +20,7 @@ function getGuideSidebar() {
   return [
     {
       text: '介绍',
-      children: [{ text: 'Web Dev Tools', link: '/' }]
+      children: [{ text: 'tool-cabinet-cli', link: '/' }]
     }
   ]
 }
