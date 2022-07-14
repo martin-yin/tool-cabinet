@@ -36,6 +36,7 @@
     "vitepress": "^0.22.3"
   },
   "dependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.18.6",
     "esno": "^0.14.1",
     "jest": "^27.5.1",
     "lerna": "^4.0.0",
