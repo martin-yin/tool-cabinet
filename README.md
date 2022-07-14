@@ -3,6 +3,27 @@
 
 工作时沉淀的一些工具。
 
+## rollup-elvin-upload
+
+打包时用于上传`source map`,仅支持`vite`环境
+
+### 使用 
+```typescript
+export default defineConfig({
+  plugins: [
+    elvinUpload({
+      include: "./dist",
+      token: "",
+      uploadUrl: "http://127.0.0.1:3100/upload",
+      ignoreFile: "./gitignore",
+    }),
+  ],
+  build: {
+    sourcemap: true,  // 需要开启surce map, 否则则获取不到source map
+  },
+});
+```
+
 ## tool-cabinet-cli 
 
 ### 使用
@@ -109,7 +130,7 @@ export default {
   tsConfigFilePath: path.join(__dirname, '../__test__/testFile/tsconfig.json') // tsconfig 位置
 }
 
-// 使用 `defineGenerateRepositoryCodeConfig`, 有类型提示。
+// 使用 `defineTsyringeInjectConfig`, 有类型提示。
 export default defineTsyringeInjectConfig({
   mainSourcePath: path.join(__dirname, '../__test__/testFile/main.ts'), // 主文件
   ignoreAbstractList: [], // 需要忽略的抽象类
