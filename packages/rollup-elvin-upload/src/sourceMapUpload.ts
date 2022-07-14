@@ -19,7 +19,7 @@ export default function elvinUpload(option: SourceMapUploadType): PluginOption {
     name: 'elvin-upload',
     async writeBundle() {
       console.log('打包结束了!')
-      const sourceMapFileList: Array<FormData> = []
+      const sourceMapFileList: Array<{ formData: FormData; filePath: string }> = []
       const { include, token, release, uploadUrl, urlPrefix } = option
       const ignoreList = await formatIgnoreList({
         ignore: option.ignore,
@@ -33,18 +33,18 @@ export default function elvinUpload(option: SourceMapUploadType): PluginOption {
         const fileListDisplay = getFileListDisplayOfExtension(filePath)
         const includeFileList = filterFileListOfIgnoreList(fileListDisplay, includeIgnoreFile?.ignoreList)
 
-        includeFileList.forEach(file => {
+        includeFileList.forEach(filePath => {
           const formData = formDataAppend({
             token,
             release,
             urlPrefix
           })
-          formData.append('file', fs.createReadStream(file))
-          sourceMapFileList.push(formData)
+          formData.append('file', fs.createReadStream(filePath))
+          sourceMapFileList.push({ formData: formData, filePath })
         })
       }
 
-      sourceMapFileList.forEach(formData => {
+      sourceMapFileList.forEach(({ formData, filePath }) => {
         const formHeaders = formData.getHeaders()
         axios
           .post<{
@@ -63,7 +63,8 @@ export default function elvinUpload(option: SourceMapUploadType): PluginOption {
             console.log(`${data.originalname} 文件上传服务器成功!`)
           })
           .catch(e => {
-            console.log(`source map 文件上传失败：`, e)
+            console.log(`路径为"${filePath}"文件上传失败, 请稍后手动上传，或重新打包上传。`)
+            console.log(`失败原因: ${e}`)
           })
       })
     }
