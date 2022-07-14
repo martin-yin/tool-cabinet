@@ -19,8 +19,12 @@ export default defineConfig({
 function getGuideSidebar() {
   return [
     {
-      text: '介绍',
-      children: [{ text: 'tool-cabinet-cli', link: '/' }]
+      text: '',
+      children: [
+        { text: '介绍', link: '/' },
+        { text: 'rollup-elvin-upload', link: '/rollup-elvin-upload' },
+        { text: 'tool-cabinet-cli', link: '/tool-cabinet-cli' }
+      ]
     }
   ]
 }
