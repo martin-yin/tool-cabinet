@@ -22,6 +22,7 @@ yarn-error.log*
 *.sln
 *.sw*
 
+/dist
 /docs/.vitepress/dist
 
 /code-generate/src/domain

@@ -1,8 +1,8 @@
+import FormData from 'form-data'
 import ignore from 'ignore'
 import fs from 'node:fs'
 import path from 'node:path'
 import type { IncludeIgnoreFileMapType, IncludeType } from './interface'
-
 /**
  *
  * @param value
@@ -14,6 +14,31 @@ export function toArray(value: string | Array<IncludeType> | string[]): string[]
   }
 
   return [value]
+}
+
+/**
+ *
+ * @param value
+ * @returns
+ */
+export function isNull(value: string) {
+  return value !== null && value !== undefined
+}
+
+/**
+ *
+ * @param value
+ * @returns
+ */
+export function formDataAppend(value: { token: string; release: string | undefined; urlPrefix: string | undefined }) {
+  const formData = new FormData()
+  Object.entries(value).forEach(item => {
+    if (item[1]) {
+      formData.append(item[0], item[1])
+    }
+  })
+
+  return formData
 }
 
 /**
